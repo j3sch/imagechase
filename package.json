@@ -1,0 +1,55 @@
+{
+	"name": "starter-template",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"format": "prettier --write ./src/**/* --config ./.prettierrc.js",
+		"lint": "eslint ./src/**/* --ext .tsx,.ts,.js,.jsx --fix"
+	},
+	"dependencies": {
+		"@typescript-eslint/types": "^5.3.1",
+		"autoprefixer": "^10.4.0",
+		"next": "12.0.3",
+		"postcss": "^8.3.11",
+		"react": "17.0.2",
+		"react-dom": "17.0.2",
+		"tailwindcss": "^2.2.19",
+		"typescript-eslint": "*"
+	},
+	"devDependencies": {
+		"@types/react": "^17.0.34",
+		"@typescript-eslint/eslint-plugin": "^5.3.1",
+		"@typescript-eslint/parser": "^5.3.1",
+		"eslint": "^8.2.0",
+		"eslint-config-airbnb": "^19.0.0",
+		"eslint-config-airbnb-typescript-prettier": "^4.2.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-import-resolver-typescript": "^2.5.0",
+		"eslint-plugin-import": "^2.25.3",
+		"eslint-plugin-jsx-a11y": "^6.5.1",
+		"eslint-plugin-prettier": "^4.0.0",
+		"eslint-plugin-react": "^7.27.0",
+		"eslint-plugin-react-hooks": "^4.3.0",
+		"husky": "^7.0.4",
+		"lint-staged": "^11.2.6",
+		"prettier": "^2.4.1",
+		"typescript": "^4.4.4"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"./src/**/*": [
+			"eslint ./src/**/* --ext .tsx,.ts,.js,.jsx --fix",
+			"prettier --write ./src/**/* --config ./.prettierrc.js"
+		],
+		"*.json": [
+			"prettier --write"
+		]
+	}
+}
