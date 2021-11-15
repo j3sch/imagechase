@@ -5,7 +5,7 @@ module.exports = {
 		es2021: true,
 	},
 	extends: [
-		'plugin:react/recommended',
+		'plugin:@next/next/recommended',
 		'airbnb-typescript-prettier',
 		'plugin:@typescript-eslint/recommended',
 	],
