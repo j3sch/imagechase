@@ -6,8 +6,8 @@ module.exports = {
 	},
 	extends: [
 		'plugin:@next/next/recommended',
-		'airbnb-typescript-prettier',
 		'plugin:@typescript-eslint/recommended',
+		'next/core-web-vitals',
 	],
 	parser: '@typescript-eslint/parser',
 	settings: {

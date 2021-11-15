@@ -1,0 +1,28 @@
+version: "3"
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    image: "j3ns6/competition-platform-backend"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: "j3ns6/competition-platform-frontend"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - backend
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 04DhXV!SyOL

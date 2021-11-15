@@ -1,9 +1,13 @@
+import { useEffect, useState } from 'react';
+
 export default function Home(): JSX.Element {
-	return (
-		<div>
-			{fetch('/contributions')
-				.then((response) => response.text())
-				.then((data) => console.log(data))}
-		</div>
-	);
+	const [response, setResponse] = useState({});
+
+	useEffect(() => {
+		fetch('http://localhost:5000/contributions').then((response) =>
+			setResponse(response),
+		);
+	}, []);
+
+	return <div>{response}</div>;
 }
