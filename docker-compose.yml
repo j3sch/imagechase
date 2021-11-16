@@ -3,28 +3,19 @@ services:
   backend:
     build: 
       context: ./backend
-      dockerfile: Dockerfile
-      # targets only the development stage in the dockerfile
       target: development
-    image: "j3ns6/competition-platform-backend"
-    # mount our host directory to the docker container
-    # mount (.) current directory to the docker container /app
-    # reflect file changes from host to container
     volumes: 
-      - ./backend:/app
-    command: npm run start:dev
+      - ./backend:/usr/src/app
     ports:
       - "5000:5000"
     depends_on:
       - db
+    command: npm run start:dev
 
   frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: "j3ns6/competition-platform-frontend"
+    build: ./frontend
     volumes: 
-      - ./frontend:/app
+      - ./frontend:/usr/src/app
     ports:
       - "3000:3000"
     depends_on:
@@ -35,9 +26,11 @@ services:
     image: postgres:14
     restart: always
     volumes:
-      - 'pgdata:/var/lib/postgresql/data/'
+      - 'postgres_data:/var/lib/postgresql/data/'
     environment:
-      POSTGRES_PASSWORD: 04DhXV!SyOL
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
   postgres-adminer:
     image: adminer
@@ -48,4 +41,4 @@ services:
       - 8080:8080
 
 volumes:
-  pgdata: {}
+  postgres_data: {}
