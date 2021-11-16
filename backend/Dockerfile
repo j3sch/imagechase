@@ -5,6 +5,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
+COPY . .
+
 RUN npm run build
 
 
@@ -18,8 +20,7 @@ COPY package*.json .
 RUN npm install --only=production
 COPY . /app
 COPY --from=development /app/dist ./dist
-ENV PORT 5000
-EXPOSE $PORT
+EXPOSE 5000
 RUN chown -R node: /app
 USER node
 CMD ["node", "dist/main"]
