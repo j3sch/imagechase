@@ -4,7 +4,15 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
+      # targets only the development stage in the dockerfile
+      target: development
     image: "j3ns6/competition-platform-backend"
+    # mount our host directory to the docker container
+    # mount (.) current directory to the docker container /app
+    # reflect file changes from host to container
+    volumes: 
+      - ./backend:/app
+    command: npm run start:dev
     ports:
       - "5000:5000"
     depends_on:
@@ -30,6 +38,14 @@ services:
       - 'pgdata:/var/lib/postgresql/data/'
     environment:
       POSTGRES_PASSWORD: 04DhXV!SyOL
+
+  postgres-adminer:
+    image: adminer
+    depends_on: 
+      - db
+    restart: always
+    ports:
+      - 8080:8080
 
 volumes:
   pgdata: {}
