@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ContributionController } from '../contribution/contribution.controller'
-import { UserController } from 'src/user/user.controller';
+import { PostController } from 'src/controller/post.controller'
+import { UserController } from 'src/controller/user.controller';
 
 @Module({
   imports: [],
-  controllers: [ContributionController, UserController]
+  controllers: [PostController, UserController]
 })
 export class AppModule {}
