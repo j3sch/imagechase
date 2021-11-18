@@ -1,25 +1,21 @@
-version: "3"
+version: '3'
 services:
   backend:
-    build: 
-      context: ./backend
-      target: development
-    volumes: 
+    build: ./backend
+    volumes:
       - ./backend:/usr/src/app
-      - /usr/src/app/node_modules/
     ports:
-      - "5000:5000"
+      - '5000:5000'
     depends_on:
       - db
-    command: npm run start:dev
 
   frontend:
     build: ./frontend
-    volumes: 
+    volumes:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules/
     ports:
-      - "3000:3000"
+      - '3000:3000'
     depends_on:
       - db
       - backend
@@ -36,7 +32,7 @@ services:
 
   postgres-adminer:
     image: adminer
-    depends_on: 
+    depends_on:
       - db
     restart: always
     ports:
