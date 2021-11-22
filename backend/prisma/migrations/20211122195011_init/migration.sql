@@ -16,8 +16,8 @@ CREATE TABLE "Competition" (
     "title" VARCHAR(150) NOT NULL,
     "description" TEXT,
     "userId" INTEGER NOT NULL,
-    "startDate" TIMESTAMP(3) NOT NULL,
-    "endDate" TIMESTAMP(3) NOT NULL,
+    "startDate" TIMESTAMP(3),
+    "endDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Competition_pkey" PRIMARY KEY ("id")
@@ -26,8 +26,9 @@ CREATE TABLE "Competition" (
 -- CreateTable
 CREATE TABLE "Submission" (
     "id" SERIAL NOT NULL,
+    "content" TEXT,
     "description" TEXT,
-    "userId" INTEGER NOT NULL,
+    "userId" INTEGER,
     "competitionId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -49,9 +50,6 @@ CREATE TABLE "Rating" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Competition_userId_key" ON "Competition"("userId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Submission_userId_key" ON "Submission"("userId");
 
 -- CreateIndex
@@ -67,7 +65,7 @@ CREATE UNIQUE INDEX "Rating_submissionId_key" ON "Rating"("submissionId");
 ALTER TABLE "Competition" ADD CONSTRAINT "Competition_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Submission" ADD CONSTRAINT "Submission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Submission" ADD CONSTRAINT "Submission_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Submission" ADD CONSTRAINT "Submission_competitionId_fkey" FOREIGN KEY ("competitionId") REFERENCES "Competition"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
