@@ -5,7 +5,7 @@ export default function CompetitionList({ competitions }) {
   return (
     <div className={styles.grid}>
       {competitions.map((competition) => (
-        <CompetitionItem competition={competition} />
+        <CompetitionItem key={competition} competition={competition} />
       ))}
     </div>
   )
