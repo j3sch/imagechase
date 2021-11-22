@@ -3,7 +3,7 @@ services:
   backend:
     build: ./backend
     volumes:
-      - backend:./backend:/usr/src/app
+      - ./backend:/usr/src/app
     ports:
       - '5000:5000'
     depends_on:
@@ -14,7 +14,7 @@ services:
   frontend:
     build: ./frontend
     volumes:
-      - frontend:./frontend:/usr/src/app
+      - ./frontend:/usr/src/app
     ports:
       - '3000:3000'
     depends_on:
@@ -40,6 +40,4 @@ services:
       - 8080:8080
 
 volumes:
-  backend:
-  frontend:
   postgres_data:
