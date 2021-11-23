@@ -6,7 +6,12 @@ import { Competition as CompetitionModel } from '@prisma/client';
 export class CompetitionController {
   constructor(private readonly prismaService: PrismaService) {}
 
-  @Post('')
+  @Get()
+  async getAllCompetitions(): Promise<CompetitionModel[]> {
+    return this.prismaService.competition.findMany();
+  }
+
+  @Post()
   async createCompetition(
     @Body()
     competitionData: {
@@ -16,23 +21,20 @@ export class CompetitionController {
       startDate: number[];
       endDate: number[];
     },
-  ): Promise<CompetitionModel | string> {
+  ): Promise<CompetitionModel | object> {
     const { title, description, userId, startDate, endDate } = competitionData;
 
-    const isSuperUser: object | null = await this.prismaService.user.findUnique(
-      {
+    const isSuperUser: { superuser: boolean } =
+      await this.prismaService.user.findUnique({
         where: {
           id: userId,
         },
         select: {
           superuser: true,
         },
-      },
-    );
+      });
 
-    console.log(isSuperUser);
-
-    if (isSuperUser) {
+    if (isSuperUser.superuser) {
       return this.prismaService.competition.create({
         data: {
           title,
@@ -45,7 +47,10 @@ export class CompetitionController {
         },
       });
     } else {
-      return 'This user is not authorised to create a new competition.';
+      return {
+        errorCode: '',
+        info: 'This user is not authorised to create a new competition.',
+      };
     }
   }
 }

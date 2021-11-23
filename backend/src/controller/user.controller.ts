@@ -7,8 +7,8 @@ export class UserController {
   constructor(private readonly prismaService: PrismaService) {}
 
   @Get()
-  getUsers() {
-    return 'all users';
+  async getAllUsers(): Promise<UserModel[]> {
+    return this.prismaService.user.findMany();
   }
 
   @Get('/:userId')
@@ -21,17 +21,24 @@ export class UserController {
     return 'get contributios that belongs to a user';
   }
 
-
-  @Post('createUser')
+  //TODO error message if email is not unique
+  @Post()
   async createUser(
-    @Body() userData: { name: string; email: string; password: string },
+    @Body()
+    userData: {
+      name: string;
+      email: string;
+      password: string;
+      superuser: string;
+    },
   ): Promise<UserModel> {
-    const { name, email, password } = userData;
+    const { name, email, password, superuser } = userData;
     return this.prismaService.user.create({
       data: {
         name,
         email,
         password,
+        superuser: superuser === 'true',
       },
     });
   }

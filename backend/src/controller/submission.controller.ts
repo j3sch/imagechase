@@ -7,8 +7,8 @@ export class SubmissionController {
   constructor(private readonly prismaService: PrismaService) {}
 
   @Get()
-  getSubmission() {
-    return 'all submissions';
+  async getAllSubmissions(): Promise<SubmissionModel[]> {
+    return this.prismaService.submission.findMany();
   }
 
   @Get('/:submissionId')
