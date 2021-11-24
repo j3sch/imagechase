@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Competition as CompetitionModel } from '@prisma/client';
 
@@ -9,6 +17,36 @@ export class CompetitionController {
   @Get()
   async getAllCompetitions(): Promise<CompetitionModel[]> {
     return this.prismaService.competition.findMany();
+  }
+
+  @Get('/:competitionId')
+  async getCompetitionById(@Param('id') id: string): Promise<CompetitionModel> {
+    return this.prismaService.competition.findUnique({
+      where: { id: Number(id) },
+    });
+  }
+
+  @Put('/:competitionId')
+  async updateCompetition(
+    @Param('id') id: string,
+    @Body()
+    competitionData: {
+      title: string;
+      description: string;
+      startDate: number[];
+      endDate: number[];
+    },
+  ): Promise<CompetitionModel> {
+    const { title, description, startDate, endDate } = competitionData;
+    return this.prismaService.competition.update({
+      where: { id: Number(id) },
+      data: {
+        title,
+        description,
+        startDate: new Date(startDate[0], startDate[1], startDate[2]),
+        endDate: new Date(endDate[0], endDate[1], endDate[2]),
+      },
+    });
   }
 
   @Post()
@@ -52,5 +90,10 @@ export class CompetitionController {
         info: 'This user is not authorised to create a new competition.',
       };
     }
+  }
+
+  @Delete('/:competitionId')
+  async deleteCompetition(@Param('id') id: string): Promise<CompetitionModel> {
+    return this.prismaService.competition.delete({ where: { id: Number(id) } });
   }
 }

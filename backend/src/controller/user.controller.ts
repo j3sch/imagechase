@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { User as UserModel } from '@prisma/client';
 
@@ -11,14 +11,11 @@ export class UserController {
     return this.prismaService.user.findMany();
   }
 
-  @Get('/:userId')
-  getUserById() {
-    return 'get user by id';
-  }
-
-  @Get('/:userId/contributions')
-  getContributionsFromUser() {
-    return 'get contributios that belongs to a user';
+  @Get(':id')
+  getUserById(@Param('id') id: string): Promise<UserModel> {
+    return this.prismaService.user.findUnique({
+      where: { id: Number(id) },
+    });
   }
 
   //TODO error message if email is not unique
@@ -41,5 +38,10 @@ export class UserController {
         superuser: superuser === 'true',
       },
     });
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string): Promise<UserModel> {
+    return this.prismaService.user.delete({ where: { id: Number(id) } });
   }
 }

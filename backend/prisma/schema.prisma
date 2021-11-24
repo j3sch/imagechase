@@ -39,9 +39,9 @@ model Submission {
   content       String?
   description   String?
   user          User?       @relation(fields: [userId], references: [id])
-  userId        Int?        @unique
+  userId        Int        
   competition   Competition @relation(fields: [competitionId], references: [id])
-  competitionId Int         @unique
+  competitionId Int         
   createdAt     DateTime    @default(now())
   Rating        Rating[]
 }
