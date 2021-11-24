@@ -8,49 +8,35 @@ import {
   Delete,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { Submission as SubmissionModel } from '@prisma/client';
+import {
+  Submission as SubmissionModel,
+  Rating as RatingModel,
+} from '@prisma/client';
+import { getSubmissionRating } from 'src/submissionRating';
 
 @Controller('submissions')
 export class SubmissionController {
   constructor(private readonly prismaService: PrismaService) {}
 
+  //todo unnecessary
   @Get()
   async getAllSubmissions(): Promise<SubmissionModel[]> {
     return this.prismaService.submission.findMany();
   }
 
-  @Get('byId/:id')
-  async getSubmissionById(@Param('id') id: string): Promise<SubmissionModel> {
-    return this.prismaService.submission.findUnique({
+  @Get(':id')
+  async getSubmissionById(@Param('id') id: string): Promise<object> {
+    const rating = await getSubmissionRating(id);
+    const submission = await this.prismaService.submission.findUnique({
       where: {
         id: Number(id),
       },
     });
+
+    return Object.assign(submission, { rating: rating });
   }
 
-  @Get('byCompetition/:competitionId')
-  async getSubmissionsByCompetition(
-    @Param('competitionId') competitionId: string,
-  ): Promise<SubmissionModel[]> {
-    return this.prismaService.submission.findMany({
-      where: {
-        competitionId: Number(competitionId),
-      },
-    });
-  }
-
-  @Get('fromUser/:userId')
-  getSubmissionsFromUser(
-    @Param('userId') userId: string,
-  ): Promise<SubmissionModel[]> {
-    return this.prismaService.submission.findMany({
-      where: {
-        userId: Number(userId),
-      },
-    });
-  }
-
-  @Put('byId/:id')
+  @Put(':id')
   async updateSubmission(
     @Param('id') id: string,
     @Body()
@@ -69,7 +55,7 @@ export class SubmissionController {
     });
   }
 
-  @Post('createSubmission')
+  @Post()
   async createSubmission(
     @Body()
     submissionData: {
@@ -94,7 +80,29 @@ export class SubmissionController {
     });
   }
 
-  @Delete('/:submissionId')
+  @Post(':id/rating')
+  async createRating(
+    @Param('id') submissionId: string,
+
+    @Body()
+    ratingData: {
+      description: string;
+      userId: number;
+      rating: number;
+    },
+  ): Promise<RatingModel> {
+    const { description, userId, rating } = ratingData;
+    return this.prismaService.rating.create({
+      data: {
+        description,
+        userId,
+        submissionId: Number(submissionId),
+        rating,
+      },
+    });
+  }
+
+  @Delete(':id')
   async deleteSubmission(@Param('id') id: string): Promise<SubmissionModel> {
     return this.prismaService.submission.delete({ where: { id: Number(id) } });
   }

@@ -8,7 +8,12 @@ import {
   Put,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { Competition as CompetitionModel } from '@prisma/client';
+import {
+  Competition as CompetitionModel,
+  Submission as SubmissionModel,
+} from '@prisma/client';
+import { getSubmissionRating } from 'src/submissionRating';
+import { sortVotes } from 'src/sortVotes';
 
 @Controller('competitions')
 export class CompetitionController {
@@ -19,14 +24,14 @@ export class CompetitionController {
     return this.prismaService.competition.findMany();
   }
 
-  @Get('/:competitionId')
+  @Get(':id')
   async getCompetitionById(@Param('id') id: string): Promise<CompetitionModel> {
     return this.prismaService.competition.findUnique({
       where: { id: Number(id) },
     });
   }
 
-  @Put('/:competitionId')
+  @Put(':id')
   async updateCompetition(
     @Param('id') id: string,
     @Body()
@@ -92,8 +97,87 @@ export class CompetitionController {
     }
   }
 
-  @Delete('/:competitionId')
-  async deleteCompetition(@Param('id') id: string): Promise<CompetitionModel> {
-    return this.prismaService.competition.delete({ where: { id: Number(id) } });
+  // @Get(':id/submissions')
+  // async getSubmissionsByCompetition(@Param('id') id: string): Promise<object> {
+  //   const submissions = await this.prismaService.submission.findMany({
+  //     where: {
+  //       competitionId: Number(id),
+  //     },
+  //     orderBy: [
+  //       {
+  //         createdAt: 'desc',
+  //       },
+  //     ],
+  //   });
+  //   for (let i = 0; i < submissions.length; i++) {
+  //     if (submissions[i].rating !== 0) {
+  //       const rating = await getSubmissionRating(submissions[i].id.toString());
+  //       Object.assign(submissions[i], { rating: rating });
+  //     }
+  //   }
+  //   return submissions;
+  // }
+
+  @Get(':id/submissions')
+  async getSubmissionsByCompetition(
+    @Param('id') id: string,
+    @Body()
+    settings: {
+      skip: number;
+      take: number;
+      order: string;
+    },
+  ): Promise<object> {
+    const { skip, take, order } = settings;
+    const submissions = await this.prismaService.submission.findMany({
+      skip,
+      take,
+      where: {
+        competitionId: Number(id),
+      },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+      ],
+    });
+
+    for (let i = 0; i < submissions.length; i++) {
+      if (submissions[i].rating !== 0) {
+        const rating = await getSubmissionRating(submissions[i].id.toString());
+        Object.assign(submissions[i], { rating: rating });
+      }
+    }
+
+    if (order === 'votes') {
+      return sortVotes(submissions);
+    } else {
+      return submissions;
+    }
+  }
+
+  //todo add get request to get the winners
+  //todo add get request to sort after ratings
+
+  @Delete(':id')
+  async deleteCompetition(
+    @Param('id') id: string,
+  ): Promise<[Object, CompetitionModel]> {
+    const deleteSubmissions = this.prismaService.submission.deleteMany({
+      where: {
+        competitionId: Number(id),
+      },
+    });
+
+    const deleteCompetition = this.prismaService.competition.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return await this.prismaService.$transaction([
+      deleteSubmissions,
+      deleteCompetition,
+    ]);
   }
 }
