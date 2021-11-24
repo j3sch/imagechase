@@ -30,13 +30,16 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 
-  postgres-adminer:
-    image: adminer
+  prisma-studio:
+    container_name: prisma-studio
+    image: timothyjmiller/prisma-studio:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 5555:5555
     depends_on:
       - db
-    restart: always
-    ports:
-      - 8080:8080
 
 volumes:
   postgres_data:

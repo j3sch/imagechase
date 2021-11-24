@@ -12,8 +12,6 @@ import {
   Competition as CompetitionModel,
   Submission as SubmissionModel,
 } from '@prisma/client';
-import { getSubmissionRating } from 'src/submissionRating';
-import { sortVotes } from 'src/sortVotes';
 
 @Controller('competitions')
 export class CompetitionController {
@@ -97,27 +95,6 @@ export class CompetitionController {
     }
   }
 
-  // @Get(':id/submissions')
-  // async getSubmissionsByCompetition(@Param('id') id: string): Promise<object> {
-  //   const submissions = await this.prismaService.submission.findMany({
-  //     where: {
-  //       competitionId: Number(id),
-  //     },
-  //     orderBy: [
-  //       {
-  //         createdAt: 'desc',
-  //       },
-  //     ],
-  //   });
-  //   for (let i = 0; i < submissions.length; i++) {
-  //     if (submissions[i].rating !== 0) {
-  //       const rating = await getSubmissionRating(submissions[i].id.toString());
-  //       Object.assign(submissions[i], { rating: rating });
-  //     }
-  //   }
-  //   return submissions;
-  // }
-
   @Get(':id/submissions')
   async getSubmissionsByCompetition(
     @Param('id') id: string,
@@ -127,37 +104,26 @@ export class CompetitionController {
       take: number;
       order: string;
     },
-  ): Promise<object> {
+  ): Promise<SubmissionModel[]> {
     const { skip, take, order } = settings;
-    const submissions = await this.prismaService.submission.findMany({
+    return await this.prismaService.submission.findMany({
       skip,
       take,
       where: {
         competitionId: Number(id),
       },
+
       orderBy: [
-        {
-          createdAt: 'desc',
-        },
+        order === 'votes'
+          ? {
+              rating: 'desc',
+            }
+          : {
+              createdAt: 'desc',
+            },
       ],
     });
-
-    for (let i = 0; i < submissions.length; i++) {
-      if (submissions[i].rating !== 0) {
-        const rating = await getSubmissionRating(submissions[i].id.toString());
-        Object.assign(submissions[i], { rating: rating });
-      }
-    }
-
-    if (order === 'votes') {
-      return sortVotes(submissions);
-    } else {
-      return submissions;
-    }
   }
-
-  //todo add get request to get the winners
-  //todo add get request to sort after ratings
 
   @Delete(':id')
   async deleteCompetition(

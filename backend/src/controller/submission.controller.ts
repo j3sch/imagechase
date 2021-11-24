@@ -18,22 +18,13 @@ import { getSubmissionRating } from 'src/submissionRating';
 export class SubmissionController {
   constructor(private readonly prismaService: PrismaService) {}
 
-  //todo unnecessary
-  @Get()
-  async getAllSubmissions(): Promise<SubmissionModel[]> {
-    return this.prismaService.submission.findMany();
-  }
-
   @Get(':id')
   async getSubmissionById(@Param('id') id: string): Promise<object> {
-    const rating = await getSubmissionRating(id);
-    const submission = await this.prismaService.submission.findUnique({
+    return await this.prismaService.submission.findUnique({
       where: {
         id: Number(id),
       },
     });
-
-    return Object.assign(submission, { rating: rating });
   }
 
   @Put(':id')
@@ -90,9 +81,10 @@ export class SubmissionController {
       userId: number;
       rating: number;
     },
-  ): Promise<RatingModel> {
+  ): Promise<[RatingModel, SubmissionModel]> {
     const { description, userId, rating } = ratingData;
-    return this.prismaService.rating.create({
+
+    const createRating = this.prismaService.rating.create({
       data: {
         description,
         userId,
@@ -100,6 +92,18 @@ export class SubmissionController {
         rating,
       },
     });
+
+    const updateSubmissionRating = this.prismaService.submission.update({
+      where: { id: Number(submissionId) },
+      data: {
+        rating: await getSubmissionRating(submissionId, rating),
+      },
+    });
+
+    return await this.prismaService.$transaction([
+      createRating,
+      updateSubmissionRating,
+    ]);
   }
 
   @Delete(':id')

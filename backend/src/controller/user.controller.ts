@@ -5,7 +5,6 @@ import {
   Submission as SubmissionModel,
   Competition as CompetitionModel,
 } from '@prisma/client';
-import { getSubmissionRating } from 'src/submissionRating';
 
 @Controller('users')
 export class UserController {
@@ -26,26 +25,30 @@ export class UserController {
   @Get(':id/submissions')
   async getSubmissionsFromUser(
     @Param('id') id: string,
+    @Body()
+    settings: {
+      skip: number;
+      take: number;
+      order: string;
+    },
   ): Promise<SubmissionModel[]> {
-    const submissions = await this.prismaService.submission.findMany({
+    const { skip, take, order } = settings;
+    return await this.prismaService.submission.findMany({
+      skip,
+      take,
       where: {
         userId: Number(id),
       },
       orderBy: [
-        {
-          createdAt: 'desc',
-        },
+        order === 'votes'
+          ? {
+              rating: 'desc',
+            }
+          : {
+              createdAt: 'desc',
+            },
       ],
     });
-
-    for (let i = 0; i < submissions.length; i++) {
-      if (submissions[i].rating !== 0) {
-        const rating = await getSubmissionRating(submissions[i].id.toString());
-        Object.assign(submissions[i], { rating: rating });
-      }
-    }
-
-    return submissions;
   }
 
   @Get(':id/competitions')
@@ -91,10 +94,5 @@ export class UserController {
         info: 'This email already exists. If you have forgotten your password, please reset it.',
       };
     }
-  }
-
-  @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<UserModel> {
-    return this.prismaService.user.delete({ where: { id: Number(id) } });
   }
 }

@@ -44,7 +44,7 @@ model Submission {
   competitionId Int         
   createdAt     DateTime    @default(now())
   Rating        Rating[]
-  rating        Int        @default(0)
+  rating        Float        @default(0)
 }
 
 model Rating {
