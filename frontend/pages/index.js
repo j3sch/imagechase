@@ -1,4 +1,5 @@
 import CompetitionList from '../components/CompetitionList'
+import useSWR from 'swr'
 
 export default function Home({ competitions }) {
   const myComp = {
@@ -16,19 +17,17 @@ export default function Home({ competitions }) {
       <CompetitionList
         competitions={[myComp, myComp, myComp, myComp]}
       ></CompetitionList>
-      {/* <CompetitionItem competition={myComp}></CompetitionItem> */}
-      {/* <CompetitionList competitions={competitions} /> */}
     </>
   )
 }
 
-export async function getStaticProps() {
-  const res = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=6')
-  const competitions = await res.json()
+// export async function getServerSideProps(context) {
+//   const res = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=6')
+//   const competitions = await res.json()
 
-  return {
-    props: {
-      competitions,
-    },
-  }
-}
+//   return {
+//     props: {
+//       competitions,
+//     },
+//   }
+// }

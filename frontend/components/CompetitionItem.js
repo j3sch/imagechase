@@ -2,16 +2,11 @@ import Link from 'next/link'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 
 export default function CompetitionItem({ competition }) {
   return (
     <Link href="/competition/[id]" as={`competition/${competition.id}`}>
-      <Card
-        style={{ minWidth: '25rem', maxWidth: '25rem', borderRadius: '10px' }}
-        className={'m-2'}
-      >
+      <Card style={cardStyle} className={'m-2'}>
         <Card.Img
           variant="top"
           src="https://source.unsplash.com/300x200/?photo"
@@ -47,4 +42,10 @@ export default function CompetitionItem({ competition }) {
       </Card>
     </Link>
   )
+}
+
+const cardStyle = {
+  minWidth: '25rem',
+  maxWidth: '25rem',
+  borderRadius: '10px',
 }
