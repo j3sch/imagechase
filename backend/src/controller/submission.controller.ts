@@ -55,48 +55,55 @@ export class SubmissionController {
       userId: number;
       competitionId: number;
     },
-  ): Promise<SubmissionModel> {
+  ): Promise<SubmissionModel | object> {
     const { content, description, userId, competitionId } = submissionData;
-    return this.prismaService.submission.create({
-      data: {
-        content,
-        description,
-        user: {
-          connect: { id: userId },
+    try {
+      const created = await this.prismaService.submission.create({
+        data: {
+          content,
+          description,
+          user: {
+            connect: { id: userId },
+          },
+          competition: {
+            connect: { id: competitionId },
+          },
         },
-        competition: {
-          connect: { id: competitionId },
-        },
-      },
-    });
+      });
+      return created;
+    } catch (e) {
+      return {
+        error: e,
+        message: 'record invalid',
+      };
+    }
   }
 
   @Post(':id/rating')
   async createRating(
-    @Param('id') submissionId: string,
+    @Param('id') id: string,
 
     @Body()
     ratingData: {
-      description: string;
+      feedback: string;
       userId: number;
       rating: number;
     },
-  ): Promise<[RatingModel, SubmissionModel]> {
-    const { description, userId, rating } = ratingData;
-
+  ): Promise<any> {
+    const { feedback, userId, rating } = ratingData;
     const createRating = this.prismaService.rating.create({
       data: {
-        description,
+        feedback,
         userId,
-        submissionId: Number(submissionId),
+        submissionId: Number(id),
         rating,
       },
     });
 
     const updateSubmissionRating = this.prismaService.submission.update({
-      where: { id: Number(submissionId) },
+      where: { id: Number(id) },
       data: {
-        rating: await getSubmissionRating(submissionId, rating),
+        rating: await getSubmissionRating(id, rating),
       },
     });
 
@@ -107,7 +114,24 @@ export class SubmissionController {
   }
 
   @Delete(':id')
-  async deleteSubmission(@Param('id') id: string): Promise<SubmissionModel> {
-    return this.prismaService.submission.delete({ where: { id: Number(id) } });
+  async deleteSubmission(
+    @Param('id') id: string,
+  ): Promise<[object, SubmissionModel]> {
+    const deleteRating = this.prismaService.rating.deleteMany({
+      where: {
+        submissionId: Number(id),
+      },
+    });
+
+    const deleteSubmissions = this.prismaService.submission.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return await this.prismaService.$transaction([
+      deleteRating,
+      deleteSubmissions,
+    ]);
   }
 }

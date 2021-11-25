@@ -18,5 +18,5 @@ export async function getSubmissionRating(
     ratingSum += ratings[i].rating;
   }
   return (ratingSum =
-    Math.round(((ratingSum + rating) / ratings.length) * 10) / 10);
+    Math.round(((ratingSum + rating) / (ratings.length + 1)) * 10) / 10);
 }
