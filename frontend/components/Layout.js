@@ -1,19 +1,16 @@
 import Meta from './Meta'
-import Nav from './Nav'
+import Navigation from './Navigation'
+import Container from 'react-bootstrap/Container'
 import Header from './Header'
-import styles from '../styles/Layout.module.css'
 
 export default function Layout({ children }) {
   return (
     <>
       <Meta />
-      <Nav />
-      <div className={styles.container}>
-        <main className={styles.main}>
-          <Header />
-          {children}
-        </main>
-      </div>
+      <Navigation />
+      <Container style={{ marginTop: '100px' }}>
+        <main>{children}</main>
+      </Container>
     </>
   )
 }

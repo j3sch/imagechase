@@ -1,5 +1,6 @@
 import Layout from '../components/Layout'
-import '../styles/globals.css'
+import '../styles/scss/globals.scss'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 export default function MyApp({ Component, pageProps }) {
   return (
