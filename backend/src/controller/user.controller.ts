@@ -52,10 +52,10 @@ export class UserController {
   }
 
   @Get(':id/competitions')
-  getCompetitionsFromUser(
+  async getCompetitionsFromUser(
     @Param('id') id: string,
   ): Promise<CompetitionModel[]> {
-    return this.prismaService.competition.findMany({
+    const competitions = await this.prismaService.competition.findMany({
       where: {
         userId: Number(id),
       },
@@ -65,6 +65,16 @@ export class UserController {
         },
       ],
     });
+    for (let i = 0; i < competitions.length; i++) {
+      const particpants = await this.prismaService.participants.findMany({
+        where: {
+          competitionId: competitions[i].id,
+        },
+      });
+      const participantCount = particpants.length;
+      Object.assign(competitions[i], { participantCount });
+    }
+    return competitions;
   }
 
   @Post()
