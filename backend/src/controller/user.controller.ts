@@ -59,6 +59,11 @@ export class UserController {
       where: {
         userId: Number(id),
       },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+      ],
     });
   }
 
@@ -69,10 +74,11 @@ export class UserController {
       name: string;
       email: string;
       password: string;
-      superuser: string;
+      judge: string;
+      bio: string;
     },
   ): Promise<UserModel | object> {
-    const { name, email, password, superuser } = userData;
+    const { name, email, password, judge, bio } = userData;
     const emailExist: { email: string } =
       await this.prismaService.user.findUnique({
         where: {
@@ -85,7 +91,8 @@ export class UserController {
           name,
           email,
           password,
-          superuser: superuser === 'true',
+          judge: judge === 'true',
+          bio,
         },
       });
     } else {
