@@ -6,7 +6,11 @@ import { PrismaService } from 'src/prisma.service';
 
 @Module({
   imports: [],
-  controllers: [SubmissionController, UserController, CompetitionController],
+  controllers: [
+    SubmissionController,
+    UserController,
+    CompetitionController,
+  ],
   providers: [PrismaService],
 })
 export class AppModule {}

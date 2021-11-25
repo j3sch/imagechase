@@ -39,19 +39,20 @@ model Submission {
   content       String?
   description   String?
   user          User?       @relation(fields: [userId], references: [id])
-  userId        Int?        @unique
+  userId        Int        
   competition   Competition @relation(fields: [competitionId], references: [id])
-  competitionId Int         @unique
+  competitionId Int         
   createdAt     DateTime    @default(now())
   Rating        Rating[]
+  rating        Float        @default(0)
 }
 
 model Rating {
   id           Int        @id @default(autoincrement())
   description  String?
   user         User       @relation(fields: [userId], references: [id])
-  userId       Int        @unique
+  userId       Int        
   submission   Submission @relation(fields: [submissionId], references: [id])
-  submissionId Int        @unique
+  submissionId Int        
   rating       Int
 }
