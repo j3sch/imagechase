@@ -66,7 +66,7 @@ export class UserController {
       ],
     });
     for (let i = 0; i < competitions.length; i++) {
-      const particpants = await this.prismaService.participants.findMany({
+      const particpants = await this.prismaService.participant.findMany({
         where: {
           competitionId: competitions[i].id,
         },
@@ -107,8 +107,7 @@ export class UserController {
       });
     } else {
       return {
-        errorCode: '',
-        info: 'This email already exists. If you have forgotten your password, please reset it.',
+        message: 'This email already exists. If you have forgotten your password, please reset it.',
       };
     }
   }

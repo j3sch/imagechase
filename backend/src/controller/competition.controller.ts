@@ -11,7 +11,7 @@ import { PrismaService } from 'src/prisma.service';
 import {
   Competition as CompetitionModel,
   Submission as SubmissionModel,
-  Participants as ParticipantsModel,
+  Participant as ParticipantsModel,
   User as UserModel,
 } from '@prisma/client';
 
@@ -29,7 +29,7 @@ export class CompetitionController {
       ],
     });
     for (let i = 0; i < competitions.length; i++) {
-      const particpants = await this.prismaService.participants.findMany({
+      const particpants = await this.prismaService.participant.findMany({
         where: {
           competitionId: competitions[i].id,
         },
@@ -45,7 +45,7 @@ export class CompetitionController {
     const competition = await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
     });
-    const particpants = await this.prismaService.participants.findMany({
+    const particpants = await this.prismaService.participant.findMany({
       where: {
         competitionId: Number(id),
       },
@@ -161,8 +161,7 @@ export class CompetitionController {
       });
     } else {
       return {
-        errorCode: '',
-        info: 'This user is not authorised to create a new competition.',
+        message: 'This user is not authorised to create a new competition.',
       };
     }
   }
@@ -177,7 +176,7 @@ export class CompetitionController {
   ): Promise<ParticipantsModel> {
     const { userId } = participantData;
 
-    return await this.prismaService.participants.create({
+    return await this.prismaService.participant.create({
       data: {
         userId,
         competitionId: Number(id),
@@ -188,53 +187,63 @@ export class CompetitionController {
   @Delete(':id')
   async deleteCompetition(
     @Param('id') id: string,
-  ): Promise<[object, object, CompetitionModel] | object> {
-    const submissions = await this.prismaService.submission.findMany({
+  ): Promise<[object, object, object, CompetitionModel] | object | any> {
+    const comp = await this.prismaService.competition.findUnique({
       where: {
-        competitionId: Number(id),
+        id: Number(id),
+      },
+      include: {
+        Participant: true,
+        Submission: {
+          include: {
+            Rating: true,
+          },
+        },
       },
     });
 
-    let deleteRating;
-    let deleteSubmissions;
+    const ratingCount =
+      comp.Submission[comp.Submission.length - 1].Rating.length;
+    const submissionCount = comp.Submission.length;
+    const participantCount = comp.Participant.length;
 
-    if (submissions.length !== 0) {
-      for (let i = 0; i < submissions.length; i++) {
-        deleteRating = this.prismaService.rating.deleteMany({
+    for (let i = 0; i < comp.Submission.length; i++) {
+      for (let j = 0; j < comp.Submission[i].Rating.length; j++) {
+        const ratings = this.prismaService.rating.deleteMany({
           where: {
-            submissionId: submissions[i].id,
-          },
-        });
-        deleteSubmissions = this.prismaService.submission.deleteMany({
-          where: {
-            competitionId: Number(id),
+            id: comp.Submission[i].Rating[j].id,
           },
         });
       }
-
-      if (submissions.length === 0) {
-        return await this.prismaService.competition.delete({
-          where: {
-            id: Number(id),
-          },
-        });
-      }
-
-      const deleteCompetition = await this.prismaService.competition.delete({
+      const deletedSubmissions = this.prismaService.submission.deleteMany({
         where: {
-          id: Number(id),
+          id: comp.Submission[i].id,
         },
       });
-
-      if (submissions.length === 0) {
-        return deleteCompetition;
-      } else {
-        return await this.prismaService.$transaction([
-          deleteRating,
-          deleteSubmissions,
-          deleteCompetition,
-        ]);
-      }
     }
+    for (let i = 0; i < comp.Participant.length; i++) {
+      const participants = this.prismaService.participant.deleteMany({
+        where: {
+          id: comp.Participant[i].id,
+        },
+      });
+    }
+    const competition = this.prismaService.competition.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return Object.assign(
+      {},
+      {
+        rating: { count: ratingCount },
+      },
+      {
+        submission: { count: submissionCount },
+      },
+      { participant: { count: participantCount } },
+      { competition },
+    );
   }
 }
