@@ -107,7 +107,8 @@ export class UserController {
       });
     } else {
       return {
-        message: 'This email already exists. If you have forgotten your password, please reset it.',
+        message:
+          'This email already exists. If you have forgotten your password, please reset it.',
       };
     }
   }
