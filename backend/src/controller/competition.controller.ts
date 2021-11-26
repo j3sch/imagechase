@@ -29,13 +29,13 @@ export class CompetitionController {
       ],
     });
     for (let i = 0; i < competitions.length; i++) {
-      const particpants = await this.prismaService.participant.findMany({
+      const participants = await this.prismaService.participant.findMany({
         where: {
           competitionId: competitions[i].id,
         },
       });
-      const participantCount = particpants.length;
-      Object.assign(competitions[i], { participantCount });
+      const participantCount = participants.length;
+      Object.assign(competitions[i], {});
     }
     return competitions;
   }
@@ -91,16 +91,21 @@ export class CompetitionController {
     competitionData: {
       title: string;
       description: string;
+      rules: string;
+      instructions: string;
       startDate: string;
       endDate: string;
     },
   ): Promise<CompetitionModel> {
-    const { title, description, startDate, endDate } = competitionData;
+    const { title, description, rules, instructions, startDate, endDate } =
+      competitionData;
     return this.prismaService.competition.update({
       where: { id: Number(id) },
       data: {
         title,
         description,
+        rules,
+        instructions,
         startDate,
         endDate,
       },
@@ -117,10 +122,10 @@ export class CompetitionController {
       rules: string;
       instructions: string;
       userId: number;
-      startDate: number[];
-      endDate: number[];
+      startDate: string;
+      endDate: string;
     },
-  ): Promise<CompetitionModel | object> {
+  ): Promise<CompetitionModel | { message: string }> {
     const {
       title,
       type,
@@ -155,8 +160,8 @@ export class CompetitionController {
           creator: {
             connect: { id: userId },
           },
-          startDate: new Date(startDate[0], startDate[1], startDate[2]),
-          endDate: new Date(endDate[0], endDate[1], endDate[2]),
+          startDate,
+          endDate,
         },
       });
     } else {
@@ -171,7 +176,7 @@ export class CompetitionController {
     @Param('id') id: string,
     @Body()
     participantData: {
-      userId;
+      userId: number;
     },
   ): Promise<ParticipantsModel> {
     const { userId } = participantData;
@@ -185,9 +190,7 @@ export class CompetitionController {
   }
 
   @Delete(':id')
-  async deleteCompetition(
-    @Param('id') id: string,
-  ): Promise<[object, object, object, CompetitionModel] | object | any> {
+  async deleteCompetition(@Param('id') id: string): Promise<object> {
     const comp = await this.prismaService.competition.findUnique({
       where: {
         id: Number(id),

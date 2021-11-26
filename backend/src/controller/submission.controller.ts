@@ -10,7 +10,6 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import {
   Submission as SubmissionModel,
-  Rating as RatingModel,
 } from '@prisma/client';
 import { getSubmissionRating } from 'src/submissionRating';
 
