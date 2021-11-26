@@ -2,6 +2,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import { Formik } from 'formik'
+import { api } from '../../config'
 
 const validate = (values) => {
   const errors = {}
@@ -49,11 +50,38 @@ export default function createCompetitionForm() {
   const currentDate = new Date()
 
   return (
-    <Container className={'w-75'}>
+    <Container className={'w-75 mb-5'}>
       <h2>Create a new competition</h2>
       <Formik
         onSubmit={(values) => {
-          alert(JSON.stringify(values, null, 2))
+          const competitionData = {
+            title: values.title,
+            type: values.type,
+            description: values.description,
+            instructions: values.instructions,
+            rules: values.description,
+            startDate: new Date(values.startDate).toISOString(),
+            endDate: new Date(values.endDate).toISOString(),
+            userId: 3,
+          }
+          fetch(`${api}/competitions`, {
+            method: 'POST', // or 'PUT'
+            // mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(competitionData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log('Success:', data)
+            })
+            .catch((error) => {
+              console.error('Error:', error)
+            })
+          // postData(`${api}/competitions`, values).then((data) => {
+          //   console.log(data) // JSON data parsed by `data.json()` call
+          // })
         }}
         validate={validate}
         initialValues={{
