@@ -9,7 +9,7 @@ export default function CompetitionItem({ competition }) {
       <Card style={cardStyle} className={'m-2'}>
         <Card.Img
           variant="top"
-          src="https://source.unsplash.com/300x200/?photo"
+          src={`https://source.unsplash.com/300x200/?${competition.type}`}
           style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}
         />
         <Card.Body className={'text-center'}>
@@ -20,7 +20,7 @@ export default function CompetitionItem({ competition }) {
             {competition.type}
           </Card.Subtitle>
           <Card.Title>{competition.title}</Card.Title>
-          <Card.Text>{competition.short}</Card.Text>
+          <Card.Text>{competition.description}</Card.Text>
           <Card.Text>
             <Container className={'text-center'}>
               <div
@@ -33,7 +33,7 @@ export default function CompetitionItem({ competition }) {
                 {new Intl.DateTimeFormat('en-GB', {
                   dateStyle: 'medium',
                   timeStyle: 'short',
-                }).format(Date.now())}
+                }).format(new Date(competition.startDate))}
               </div>
             </Container>
           </Card.Text>

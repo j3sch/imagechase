@@ -10,7 +10,7 @@ export default function Navigation() {
       <Container className={'text-uppercase'}>
         <Link href="/" passHref>
           <Navbar.Brand>
-            <i class="bi bi-image me-2" style={{ fontSize: '2rem' }}></i>{' '}
+            <i className={'bi bi-image me-2'} style={{ fontSize: '2rem' }}></i>{' '}
             <span className={'align-text-bottom'}>Competitionzz</span>
           </Navbar.Brand>
         </Link>
