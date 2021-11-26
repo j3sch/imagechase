@@ -62,11 +62,10 @@ export default function createCompetitionForm() {
             rules: values.description,
             startDate: new Date(values.startDate).toISOString(),
             endDate: new Date(values.endDate).toISOString(),
-            userId: 3,
+            userId: 1,
           }
           fetch(`${api}/competitions`, {
-            method: 'POST', // or 'PUT'
-            // mode: 'no-cors',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },

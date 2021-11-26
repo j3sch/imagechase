@@ -1,31 +1,29 @@
 import CompetitionList from '../components/CompetitionList'
 import { api } from '../config'
+import { useState, useEffect } from 'react'
+import useSWR from 'swr'
 
-export default function Home({ competitions }) {
-  const myComp = {
-    id: 1,
-    title: 'Draw me best!',
-    short:
-      'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores',
-    type: 'Painting',
-    participants: 40,
-    startDate: Date(Date.UTC(2020, 12, 1, 3, 0, 0)),
-  }
+const fetcher = (url) => fetch(url).then((res) => res.json())
+const useMounted = () => {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  return mounted
+}
+
+export default function Home() {
+  const mounted = useMounted()
+  const { data, error } = useSWR(
+    () => (mounted ? `${api}/competitions` : null),
+    fetcher
+  )
+
+  if (error) return <div>{error}</div>
+  if (!data) return <div>loading...</div>
+
   return (
     <>
       <h1>Home</h1>
-      <CompetitionList competitions={competitions}></CompetitionList>
+      <CompetitionList competitions={data}></CompetitionList>
     </>
   )
-}
-
-export async function getServerSideProps(context) {
-  const res = await fetch(`${api}/competitions/`)
-  const competitions = await res.json()
-
-  return {
-    props: {
-      competitions,
-    },
-  }
 }
