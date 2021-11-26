@@ -5,6 +5,7 @@ import {
   Submission as SubmissionModel,
   Competition as CompetitionModel,
 } from '@prisma/client';
+import { ErrorMessage } from 'src/types';
 
 @Controller('users')
 export class UserController {
@@ -87,7 +88,7 @@ export class UserController {
       judge: string;
       bio: string;
     },
-  ): Promise<UserModel | object> {
+  ): Promise<UserModel | ErrorMessage> {
     const { name, email, password, judge, bio } = userData;
     const emailExist: { email: string } =
       await this.prismaService.user.findUnique({

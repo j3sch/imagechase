@@ -10,15 +10,17 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import {
   Submission as SubmissionModel,
+  Rating as RatingModel,
 } from '@prisma/client';
 import { getSubmissionRating } from 'src/submissionRating';
+import { ErrorMessage } from 'src/types';
 
 @Controller('submissions')
 export class SubmissionController {
   constructor(private readonly prismaService: PrismaService) {}
 
   @Get(':id')
-  async getSubmissionById(@Param('id') id: string): Promise<object> {
+  async getSubmissionById(@Param('id') id: string): Promise<SubmissionModel> {
     return await this.prismaService.submission.findUnique({
       where: {
         id: Number(id),
@@ -54,7 +56,7 @@ export class SubmissionController {
       userId: number;
       competitionId: number;
     },
-  ): Promise<SubmissionModel | object> {
+  ): Promise<SubmissionModel | ErrorMessage> {
     const { content, description, userId, competitionId } = submissionData;
     try {
       const created = await this.prismaService.submission.create({
@@ -72,7 +74,6 @@ export class SubmissionController {
       return created;
     } catch (e) {
       return {
-        error: e,
         message: 'record invalid',
       };
     }
@@ -88,7 +89,7 @@ export class SubmissionController {
       userId: number;
       rating: number;
     },
-  ): Promise<any> {
+  ): Promise<[RatingModel, SubmissionModel]> {
     const { feedback, userId, rating } = ratingData;
     const createRating = this.prismaService.rating.create({
       data: {
@@ -113,24 +114,11 @@ export class SubmissionController {
   }
 
   @Delete(':id')
-  async deleteSubmission(
-    @Param('id') id: string,
-  ): Promise<[object, SubmissionModel]> {
-    const deleteRating = this.prismaService.rating.deleteMany({
-      where: {
-        submissionId: Number(id),
-      },
-    });
-
-    const deleteSubmissions = this.prismaService.submission.delete({
+  async deleteSubmission(@Param('id') id: string): Promise<SubmissionModel> {
+    return await this.prismaService.submission.delete({
       where: {
         id: Number(id),
       },
     });
-
-    return await this.prismaService.$transaction([
-      deleteRating,
-      deleteSubmissions,
-    ]);
   }
 }
