@@ -11,25 +11,47 @@ import { PrismaService } from 'src/prisma.service';
 import {
   Competition as CompetitionModel,
   Submission as SubmissionModel,
-  Participants as ParticipantsModel,
-  User as UserModel
+  Participant as ParticipantsModel,
+  User as UserModel,
 } from '@prisma/client';
-import { skip } from 'rxjs';
 
 @Controller('competitions')
 export class CompetitionController {
   constructor(private readonly prismaService: PrismaService) {}
 
   @Get()
-  async getAllCompetitions(): Promise<CompetitionModel[]> {
-    return this.prismaService.competition.findMany();
+  async getAllCompetitions(): Promise<any> {
+    let competitions = await this.prismaService.competition.findMany({
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+      ],
+    });
+    for (let i = 0; i < competitions.length; i++) {
+      const particpants = await this.prismaService.participant.findMany({
+        where: {
+          competitionId: competitions[i].id,
+        },
+      });
+      const participantCount = particpants.length;
+      Object.assign(competitions[i], { participantCount });
+    }
+    return competitions;
   }
 
   @Get(':id')
-  async getCompetitionById(@Param('id') id: string): Promise<CompetitionModel> {
-    return this.prismaService.competition.findUnique({
+  async getCompetitionById(@Param('id') id: string): Promise<object> {
+    const competition = await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
     });
+    const particpants = await this.prismaService.participant.findMany({
+      where: {
+        competitionId: Number(id),
+      },
+    });
+    const participantCount = particpants.length;
+    return Object.assign(competition, { participantCount });
   }
 
   @Get(':id/submissions')
@@ -69,8 +91,8 @@ export class CompetitionController {
     competitionData: {
       title: string;
       description: string;
-      startDate: number[];
-      endDate: number[];
+      startDate: string;
+      endDate: string;
     },
   ): Promise<CompetitionModel> {
     const { title, description, startDate, endDate } = competitionData;
@@ -79,8 +101,8 @@ export class CompetitionController {
       data: {
         title,
         description,
-        startDate: new Date(startDate[0], startDate[1], startDate[2]),
-        endDate: new Date(endDate[0], endDate[1], endDate[2]),
+        startDate,
+        endDate,
       },
     });
   }
@@ -89,31 +111,38 @@ export class CompetitionController {
   async createCompetition(
     @Body()
     competitionData: {
-        title: string;
-        type: string;
-        description: string;
-        rules: string,
-        instructions: string,
-        userId: number;
+      title: string;
+      type: string;
+      description: string;
+      rules: string;
+      instructions: string;
+      userId: number;
       startDate: number[];
       endDate: number[];
     },
   ): Promise<CompetitionModel | object> {
-    const { title, type, description, rules, instructions, userId, startDate, endDate } = competitionData;
+    const {
+      title,
+      type,
+      description,
+      rules,
+      instructions,
+      userId,
+      startDate,
+      endDate,
+    } = competitionData;
 
-    const user: UserModel =
-      await this.prismaService.user.findUnique({
-        where: {
-          id: userId,
-        },
-      });
-    
+    const user: UserModel = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
     if (user === null) {
       return {
-        message: 'user does not exits.'
-      }
+        message: 'user does not exits.',
+      };
     }
-    
 
     if (user.judge) {
       return this.prismaService.competition.create({
@@ -132,74 +161,89 @@ export class CompetitionController {
       });
     } else {
       return {
-        errorCode: '',
-        info: 'This user is not authorised to create a new competition.',
+        message: 'This user is not authorised to create a new competition.',
       };
     }
   }
 
-  // @Post(':id/participants')
-  // async addParticipants(@Param('id') id: string, @Body participantData: {
-  //   userId,
-  //   competitionId
-  // }): Promise<ParticipantsModel> {
+  @Post(':id/participants')
+  async addParticipants(
+    @Param('id') id: string,
+    @Body()
+    participantData: {
+      userId;
+    },
+  ): Promise<ParticipantsModel> {
+    const { userId } = participantData;
 
-  // }
+    return await this.prismaService.participant.create({
+      data: {
+        userId,
+        competitionId: Number(id),
+      },
+    });
+  }
 
   @Delete(':id')
   async deleteCompetition(
     @Param('id') id: string,
-  ): Promise<[object, object, CompetitionModel] | object> {
-    const submissions = await this.prismaService.submission.findMany({
+  ): Promise<[object, object, object, CompetitionModel] | object | any> {
+    const comp = await this.prismaService.competition.findUnique({
       where: {
-        competitionId: Number(id),
+        id: Number(id),
+      },
+      include: {
+        Participant: true,
+        Submission: {
+          include: {
+            Rating: true,
+          },
+        },
       },
     });
 
-    let deleteRating;
-    let deleteSubmissions;
+    const ratingCount =
+      comp.Submission[comp.Submission.length - 1].Rating.length;
+    const submissionCount = comp.Submission.length;
+    const participantCount = comp.Participant.length;
 
-    if (submissions.length !== 0) {
-      for (let i = 0; i < submissions.length; i++) {
-        if (submissions[i] === undefined) {
-          skip;
-        }
-        deleteRating = this.prismaService.rating.deleteMany({
+    for (let i = 0; i < comp.Submission.length; i++) {
+      for (let j = 0; j < comp.Submission[i].Rating.length; j++) {
+        const ratings = this.prismaService.rating.deleteMany({
           where: {
-            submissionId: submissions[i].id,
-          },
-        });
-        deleteSubmissions = this.prismaService.submission.deleteMany({
-          where: {
-            competitionId: Number(id),
+            id: comp.Submission[i].Rating[j].id,
           },
         });
       }
-
-
-      if (submissions.length === 0) {
-        return await this.prismaService.competition.delete({
-          where: {
-            id: Number(id),
-          },
-        })
-      }
-
-      const deleteCompetition = await this.prismaService.competition.delete({
+      const deletedSubmissions = this.prismaService.submission.deleteMany({
         where: {
-          id: Number(id),
+          id: comp.Submission[i].id,
         },
       });
-
-      if (submissions.length === 0) {
-        return deleteCompetition;
-      } else {
-        return await this.prismaService.$transaction([
-          deleteRating,
-          deleteSubmissions,
-          deleteCompetition,
-        ]);
-      }
     }
+    for (let i = 0; i < comp.Participant.length; i++) {
+      const participants = this.prismaService.participant.deleteMany({
+        where: {
+          id: comp.Participant[i].id,
+        },
+      });
+    }
+    const competition = this.prismaService.competition.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return Object.assign(
+      {},
+      {
+        rating: { count: ratingCount },
+      },
+      {
+        submission: { count: submissionCount },
+      },
+      { participant: { count: participantCount } },
+      { competition },
+    );
   }
 }

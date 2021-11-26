@@ -52,10 +52,10 @@ export class UserController {
   }
 
   @Get(':id/competitions')
-  getCompetitionsFromUser(
+  async getCompetitionsFromUser(
     @Param('id') id: string,
   ): Promise<CompetitionModel[]> {
-    return this.prismaService.competition.findMany({
+    const competitions = await this.prismaService.competition.findMany({
       where: {
         userId: Number(id),
       },
@@ -65,6 +65,16 @@ export class UserController {
         },
       ],
     });
+    for (let i = 0; i < competitions.length; i++) {
+      const particpants = await this.prismaService.participant.findMany({
+        where: {
+          competitionId: competitions[i].id,
+        },
+      });
+      const participantCount = particpants.length;
+      Object.assign(competitions[i], { participantCount });
+    }
+    return competitions;
   }
 
   @Post()
@@ -97,8 +107,7 @@ export class UserController {
       });
     } else {
       return {
-        errorCode: '',
-        info: 'This email already exists. If you have forgotten your password, please reset it.',
+        message: 'This email already exists. If you have forgotten your password, please reset it.',
       };
     }
   }
