@@ -16,9 +16,10 @@ export default function SubmissionList({ competitionid }) {
 
   return (
     <Stack gap={4}>
-      {submissions.map((submission) => (
-        <SubmissionCard key={submission.id} submission={submission} />
-      ))}
+      {typeof submissions === [] &&
+        submissions.map((submission) => (
+          <SubmissionCard key={'submission'} submission={submission} />
+        ))}
     </Stack>
   )
 }

@@ -4,7 +4,14 @@ import { api } from '../config'
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
 export default function useCompetition(id) {
-  const { data, error } = useSWR(`${api}/competitions/${id}`, fetcher)
+  let query = false
+  if (typeof id !== 'undefined') {
+    query = true
+  }
+  const { data, error } = useSWR(
+    () => (test ? `${api}/competitions/${id}` : null),
+    fetcher
+  )
 
   return {
     competition: data,
