@@ -16,7 +16,7 @@ jobs:
           heroku_app_name: "imagechase"
           heroku_email: "jonasoliver@web.de"
           usedocker: true
-          apdir: "frontend"
+          appdir: "frontend"
       #  uses: akhileshns/heroku-deploy@v3.12.12
       #   with:
       #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
