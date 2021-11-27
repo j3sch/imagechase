@@ -1,41 +1,37 @@
 import Link from 'next/link'
 import SubmissionList from '../../../components/submission/SubmissionList'
-import { api } from '../../../config'
-import { useState, useEffect } from 'react'
-import useSWR from 'swr'
 import Button from 'react-bootstrap/Button'
-import Badge from 'react-bootstrap/Badge'
+import Spinner from 'react-bootstrap/Spinner'
+import { useState, useEffect } from 'react'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import { useRouter } from 'next/router'
+import useCompetition from '../../../hooks/use-competition'
 
-export const fetcher = (url) => fetch(url).then((res) => res.json())
 export const useMounted = () => {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
   return mounted
 }
 
-export default function Competition({ competition }) {
+export default function Competition() {
   const mounted = useMounted()
-  const { data, error } = useSWR(
-    () =>
-      mounted ? `${api}/competitions/${competition.id}/submissions` : null,
-    fetcher
-  )
-
   const router = useRouter()
-  if (router.isFallback) {
-    return <div>loading...</div>
+  const { id } = router.query
+
+  const { competition, loading } = mounted
+    ? useCompetition(id)
+    : { competition: null, loading: true }
+
+  if (loading) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    )
   }
 
-  if (mounted) {
-    console.log(data)
-  }
-
-  if (error) return <div>{error}</div>
-  if (!data) return <div>loading...</div>
   return (
     <>
       <Container
@@ -97,32 +93,35 @@ export default function Competition({ competition }) {
           </Col>
         </Row>
       </Container>
-      <SubmissionList submissions={data} />
+      <SubmissionList competitionId={competition.id} />
     </>
   )
 }
 
-export async function getStaticProps(context) {
-  const res = await fetch(`${api}/competitions/${context.params.id}`)
-  const competition = await res.json()
+// export async function getStaticProps(context) {
+//   const COMPETITION_URL = `${api}/competitions/${context.params.id}`
+//   const res = await fetch(COMPETITION_URL)
+//   const competition = await res.json()
 
-  return {
-    props: {
-      competition,
-    },
-  }
-}
+//   return {
+//     props: {
+//       fallback: {
+//         [COMPETITION_URL]: competition,
+//       },
+//     },
+//   }
+// }
 
-export async function getStaticPaths() {
-  const res = await fetch(`${api}/competitions`)
+// export async function getStaticPaths() {
+//   const res = await fetch(`${api}/competitions`)
 
-  const competitions = await res.json()
+//   const competitions = await res.json()
 
-  const ids = competitions.map((competition) => competition.id)
-  const paths = ids.map((id) => ({ params: { id: id.toString() } }))
+//   const ids = competitions.map((competition) => competition.id)
+//   const paths = ids.map((id) => ({ params: { id: id.toString() } }))
 
-  return {
-    paths,
-    fallback: true,
-  }
-}
+//   return {
+//     paths,
+//     fallback: true,
+//   }
+// }
