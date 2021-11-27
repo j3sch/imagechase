@@ -44,7 +44,7 @@ export default function Competition({ competition }) {
           <Col>
             <div
               className="position-absolute"
-              style={{ right: '1rem', top: '4rem' }}
+              style={{ right: '1rem', top: '1rem' }}
             >
               <p>
                 START-DATE:{' '}
