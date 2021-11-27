@@ -85,7 +85,7 @@ export default function createCompetitionForm() {
         validate={validate}
         initialValues={{
           title: '',
-          type: null,
+          type: 'Select a type',
           description: '',
           instructions: '',
           rules: '',

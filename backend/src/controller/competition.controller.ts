@@ -74,7 +74,13 @@ export class CompetitionController {
       where: {
         competitionId: Number(id),
       },
-
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
       orderBy: [
         order === 'votes'
           ? {

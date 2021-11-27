@@ -2,13 +2,17 @@ import Link from 'next/link'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
+import clsx from 'clsx'
 
-export default function CompetitionItem({ competition }) {
+export default function CompetitionItem({ competition, number }) {
   return (
     <Link href="/competition/[id]" as={`competition/${competition.id}`}>
-      <Card style={cardStyle} className={'m-2'}>
+      <Card
+        style={cardStyle}
+        className={clsx(number % 3 === 1 && 'mx-5', 'my-4')}
+      >
         <Card.Img
-          variant="top"
+          variant="top" 
           src={`https://source.unsplash.com/300x200/?${competition.type}`}
           style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}
         />
