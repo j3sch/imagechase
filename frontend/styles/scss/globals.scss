@@ -7,6 +7,10 @@ $theme-colors: (
   'danger': #ff007f,
   'light': #c0ccda,
   'dark': #001738,
+  'lighter-blue': #e9eeff,
+  'light-blue': #c7d2fe,
+  'text-lighter-blue': #3147ac,
+  'text-light-blue': #4f46e5,
 );
 
 @import '~bootstrap/scss/bootstrap.scss';
