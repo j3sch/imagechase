@@ -9,7 +9,7 @@ FROM base as build
 ENV NODE_ENV=build
 WORKDIR /build
 COPY --from=base /usr/src/app ./
-RUN npm run build && npm prune --production
+RUN npm run build
 
 ####   production    ####
 FROM node:17.1-alpine as production
