@@ -121,27 +121,28 @@ export default function Competition({ competition }) {
   )
 }
 
-export async function getStaticProps(context) {
-  const res = await fetch(`${api}/competitions/${context.params.id}`)
-  const competition = await res.json()
-
-  return {
-    props: {
-      competition,
-    },
-  }
-}
-
 export async function getStaticPaths() {
   const res = await fetch(`${api}/competitions`)
 
   const competitions = await res.json()
 
-  const ids = competitions.map((competition) => competition.id)
-  const paths = ids.map((id) => ({ params: { id: id.toString() } }))
+  const paths = competitions.map((competition) => ({
+    params: { id: competition.id },
+  }))
 
   return {
     paths,
     fallback: false,
+  }
+
+  export async function getStaticProps({ params }) {
+    const res = await fetch(`${api}/competitions/${params.id}`)
+    const competition = await res.json()
+
+    return {
+      props: {
+        competition,
+      },
+    }
   }
 }
