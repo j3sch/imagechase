@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Navbar from 'react-bootstrap/Navbar'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
@@ -10,8 +11,13 @@ export default function Navigation() {
       <Container className={'text-uppercase'}>
         <Link href="/" passHref>
           <Navbar.Brand>
-            <i className={'bi bi-image me-2'} style={{ fontSize: '2rem' }}></i>{' '}
-            <span className={'align-text-bottom'}>Competitionzz</span>
+            <Image
+              className={'mt-1'}
+              src="/images/logo.png"
+              height={26}
+              width={200}
+              alt="Imagechase"
+            />
           </Navbar.Brand>
         </Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
