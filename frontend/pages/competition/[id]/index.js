@@ -133,22 +133,22 @@ export async function getStaticPaths() {
   const competitions = await res.json()
 
   const paths = competitions.map((competition) => ({
-    params: { id: competition.id },
+    params: { id: competition.id.toString() },
   }))
 
   return {
     paths,
     fallback: true,
   }
+}
 
-  export async function getStaticProps({ params }) {
-    const res = await fetch(`${api}/competitions/${params.id}`)
-    const competition = await res.json()
+export async function getStaticProps({ params }) {
+  const res = await fetch(`${api}/competitions/${params.id}`)
+  const competition = await res.json()
 
-    return {
-      props: {
-        competition,
-      },
-    }
+  return {
+    props: {
+      competition,
+    },
   }
 }
