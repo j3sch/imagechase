@@ -1,7 +1,9 @@
-version: '3'
+version: '3.8'
 services:
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      target: base
     volumes:
       - ./backend:/usr/src/app
     ports:
@@ -11,7 +13,9 @@ services:
     command: npm run start:dev
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      target: base
     volumes:
       - ./frontend:/usr/src/app
     ports:
@@ -19,6 +23,7 @@ services:
     depends_on:
       - db
       - backend
+    command: npm run dev
 
   db:
     image: postgres:14
