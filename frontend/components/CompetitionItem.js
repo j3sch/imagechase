@@ -12,7 +12,7 @@ export default function CompetitionItem({ competition, number }) {
         className={clsx(number % 3 === 1 && 'mx-5', 'my-4')}
       >
         <Card.Img
-          variant="top" 
+          variant="top"
           src={`https://source.unsplash.com/300x200/?${competition.type}`}
           style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}
         />
@@ -41,7 +41,12 @@ export default function CompetitionItem({ competition, number }) {
               </div>
             </Container>
           </Card.Text>
-          <Button variant="outline-secondary">JOIN COMPETITION</Button>
+          <Link
+            href="/competition/[id]/join"
+            as={`competition/${competition.id}/join`}
+          >
+            <Button variant="outline-secondary">JOIN COMPETITION</Button>
+          </Link>
         </Card.Body>
       </Card>
     </Link>
