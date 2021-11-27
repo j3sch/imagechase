@@ -1,5 +1,5 @@
 import Link from 'next/link'
-// import SubmissionList from '../../../components/submission/SubmissionList'
+import SubmissionList from '../../../components/submission/SubmissionList'
 import { api } from '../../../config'
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
@@ -19,15 +19,19 @@ export const useMounted = () => {
 
 export default function Competition({ competition }) {
   const mounted = useMounted()
-  // const { data, error } = useSWR(
-  //   () =>
-  //     mounted ? `${api}/competitions/${competition.id}/submissions` : null,
-  //   fetcher
-  // )
+  const { data, error } = useSWR(
+    () =>
+      mounted ? `${api}/competitions/${competition.id}/submissions` : null,
+    fetcher
+  )
 
   const router = useRouter()
   if (router.isFallback) {
     return <div>loading...</div>
+  }
+
+  if (mounted) {
+    console.log(data)
   }
 
   if (error) return <div>{error}</div>
@@ -118,7 +122,7 @@ export default function Competition({ competition }) {
           </Col>
         </Row>
       </Container>
-      {/* <SubmissionList submissions={data} /> */}
+      <SubmissionList submissions={data} />
     </>
   )
 }
