@@ -18,17 +18,17 @@ export const useMounted = () => {
 }
 
 export default function Competition({ competition }) {
-  const router = useRouter()
-  if (router.isFallback) {
-    return <div>loading...</div>
-  }
-
   const mounted = useMounted()
   const { data, error } = useSWR(
     () =>
       mounted ? `${api}/competitions/${competition.id}/submissions` : null,
     fetcher
   )
+
+  const router = useRouter()
+  if (router.isFallback) {
+    return <div>loading...</div>
+  }
 
   if (mounted) {
     console.log(data)
