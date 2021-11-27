@@ -3,6 +3,7 @@ import SubmissionList from '../../components/submission/SubmissionList'
 import { api } from '../../config'
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
+import Button from 'react-bootstrap/Button'
 
 export const fetcher = (url) => fetch(url).then((res) => res.json())
 export const useMounted = () => {
@@ -27,10 +28,17 @@ export default function Competition({ competition }) {
   if (!data) return <div>loading...</div>
   return (
     <>
-      <h1>{competition.title}</h1>
-      <p>{competition.id}</p>
-      <br />
-      <Link href="/">Go Back</Link>
+      <div
+        className="d-flex align-items-center mb-3"
+        style={{ height: '5rem', backgroundColor: 'rgba(131, 59, 236, 0.1)' }}
+      >
+        <Link href="/">
+          <Button variant="outline-secondary" size="md" className="m-2 position-absolute" style={{}}>
+            JOIN COMPETITION
+          </Button>
+        </Link>
+        <h2 className="ms-4">{competition.title}</h2>
+      </div>
       <SubmissionList submissions={data} />
     </>
   )

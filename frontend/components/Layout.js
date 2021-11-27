@@ -8,7 +8,7 @@ export default function Layout({ children }) {
     <>
       <Meta />
       <Navigation />
-      <Container style={{ marginTop: '100px' }}>
+      <Container style={{ marginTop: '4.6rem' }}>
         <main>{children}</main>
       </Container>
     </>

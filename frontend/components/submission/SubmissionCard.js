@@ -9,12 +9,17 @@ import Badge from 'react-bootstrap/Badge'
 export default function SubmissionCard({ submission }) {
   return (
     <Link href="/competition/[id]" as={`competition/${submission.id}`}>
-      <Card>
+      <Card style={cardStyle}>
         <Row>
           <Col>
             <Card.Img
               variant="top"
               src={`https://source.unsplash.com/350x200/?`}
+              style={{
+                borderTopLeftRadius: '10px',
+                borderBottomLeftRadius: '10px',
+              }}
+              className="rounded-left"
             />
           </Col>
           <Col>
@@ -41,7 +46,7 @@ export default function SubmissionCard({ submission }) {
                   <p>{submission.description}</p>
                 </Card.Text>
                 <Button
-                  variant="primary"
+                  variant="outline-secondary"
                   size="md"
                   className="position-absolute bottom-0 mw-100 d-inline-block"
                   style={{
@@ -60,6 +65,6 @@ export default function SubmissionCard({ submission }) {
   )
 }
 
-// const cardStyle = {
-//   borderRadius: '10px',
-// }
+const cardStyle = {
+  borderRadius: '10px',
+}
