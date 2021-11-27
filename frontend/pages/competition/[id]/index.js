@@ -40,7 +40,7 @@ export default function Competition({ competition }) {
     <>
       <Container
         className="align-items-center mb-3 position-relative"
-        style={{ height: '5rem', backgroundColor: 'rgba(0,23,56, 0.1)' }}
+        style={{ height: '13rem', backgroundColor: 'rgba(0,23,56, 0.1)' }}
       >
         <Row>
           <Col className="ms-4">
@@ -49,40 +49,51 @@ export default function Competition({ competition }) {
           </Col>
           <Col>
             <div
-              className="text-text-light-blue rounded fs-5 fw-bold text-center position-absolute"
-              style={{
-                paddingTop: '0.2rem',
-                paddingBottom: '0.2rem',
-                paddingLeft: '0.6rem',
-                paddingRight: '0.6rem',
-                right: '14rem',
-                backgroundColor: 'rgba(0,23,56, 0.05)',
-              }}
+              className="position-absolute"
+              style={{ right: '1rem', top: '1rem' }}
             >
-              <i
-                className="bi bi-people-fill me-2"
-                style={{ fontSize: '1.3rem' }}
-              ></i>
-              {competition.participantCount}
+              <p>
+                START-DATE:{' '}
+                {new Intl.DateTimeFormat('en-GB', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }).format(new Date(competition.startDate))}
+              </p>
+              <p>
+                END-DATE:{'  '}
+                {new Intl.DateTimeFormat('en-GB', {
+                  dateStyle: 'medium',
+                  timeStyle: 'short',
+                }).format(new Date(competition.endDate))}
+              </p>
             </div>
-            <Link href="/">
-              <Button
-                variant="outline-secondary"
-                size="md"
-                className="m-2 position-absolute"
-                style={{ right: '1.2rem' }}
+            <div
+              className="position-absolute position-relative"
+              style={{ right: '1rem', top: '9rem' }}
+            >
+              <div
+                className="d-flex text-text-light-blue rounded fs-5 fw-bold text-center position-absolute"
+                style={{
+                  paddingTop: '0.2rem',
+                  paddingBottom: '0.2rem',
+                  paddingLeft: '0.6rem',
+                  paddingRight: '0.6rem',
+                  right: '11.5rem',
+                  backgroundColor: 'rgba(0,23,56, 0.05)',
+                }}
               >
-                JOIN COMPETITION
-              </Button>
-            </Link>
-            {new Intl.DateTimeFormat('en-GB', {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-            }).format(new Date(competition.startDate))}
-            {new Intl.DateTimeFormat('en-GB', {
-              dateStyle: 'medium',
-              timeStyle: 'short',
-            }).format(new Date(competition.endDate))}
+                <i
+                  className="bi bi-people-fill me-2"
+                  style={{ fontSize: '1.3rem' }}
+                />
+                {competition.participantCount}
+              </div>
+              <Link href="/">
+                <Button variant="outline-secondary" size="md">
+                  JOIN COMPETITION
+                </Button>
+              </Link>
+            </div>
           </Col>
         </Row>
       </Container>
