@@ -8,6 +8,7 @@ import Badge from 'react-bootstrap/Badge'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
+import { useRouter } from 'next/router'
 
 export const fetcher = (url) => fetch(url).then((res) => res.json())
 export const useMounted = () => {
@@ -17,6 +18,11 @@ export const useMounted = () => {
 }
 
 export default function Competition({ competition }) {
+  const router = useRouter()
+  if (router.isFallback) {
+    return <div>loading...</div>
+  }
+
   const mounted = useMounted()
   const { data, error } = useSWR(
     () =>
@@ -106,6 +112,6 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: false,
+    fallback: true,
   }
 }

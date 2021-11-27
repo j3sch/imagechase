@@ -13,7 +13,7 @@ const validate = (values) => {
     errors.title = 'Must be 50 characters or less'
   }
   // type
-  if (!values.type) {
+  if (values.type == 'notype') {
     errors.type = 'Choose a type'
   }
   // description
@@ -85,7 +85,7 @@ export default function createCompetitionForm() {
         validate={validate}
         initialValues={{
           title: '',
-          type: 'Select a type',
+          type: 'notype',
           description: '',
           instructions: '',
           rules: '',
@@ -128,9 +128,11 @@ export default function createCompetitionForm() {
                 onBlur={handleBlur}
                 isInvalid={touched.type && errors.type}
               >
-                <option>Select a type</option>
+                <option value="notype">Select a type</option>
                 <option value="Photography">Photography</option>
-                <option value="Drawing">Drawing</option>
+                <option value="Anime">Anime</option>
+                <option value="Painting">Drawing</option>
+                <option value="3D Modeling">3D Modeling</option>
               </Form.Select>
               <Form.Control.Feedback type="invalid">
                 {errors.type}
