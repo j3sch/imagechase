@@ -10,33 +10,27 @@ import { useRouter } from 'next/router'
 import useCompetition from '../../../hooks/use-competition'
 import useSWR, { SWRConfig } from 'swr'
 import { api } from '../../../config'
-let competition_url = ''
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
-// export const useMounted = () => {
-//   const [mounted, setMounted] = useState(false)
-//   useEffect(() => setMounted(true), [])
-//   return mounted
-// }
+export const useMounted = () => {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  return mounted
+}
 
-export default function Competition({ fallback }) {
-  // const mounted = useMounted()
-  // const router = useRouter()
-  // const { id } = router.query
-  // const { competition, loading } = useCompetition(id)
+export default function Competition({ competition }) {
+  const mounted = useMounted()
+  const { data, error } = useSWR(
+    () =>
+      mounted ? `${api}/competitions/${competition.id}/submissions` : null,
+    fetcher
+  )
 
-  const { data, error } = useSWR(competition_url)
-  if (!data) {
-    return (
-      <Spinner animation="border" role="status">
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
-    )
-  }
-  const competition = data
+  if (error) return <div>{error}</div>
+  if (!data) return <div>loading...</div>
 
   return (
-    <SWRConfig value={{ fallback }}>
+    <>
       <Container
         className="align-items-center mb-3 position-relative border"
         style={{ height: '10rem', backgroundColor: 'rgba(0,23,56, 0.08)' }}
@@ -121,22 +115,9 @@ export default function Competition({ fallback }) {
           </Col>
         </Row>
       </Container>
-      <SubmissionList competitionId={competition.id} />
-    </SWRConfig>
+      <SubmissionList submissions={data} />
+    </>
   )
-}
-
-export async function getStaticProps(context) {
-  const competition_url = `${api}/competitions/${context.params.id}`
-  const competition = await fetcher(competition_url)
-
-  return {
-    props: {
-      fallback: {
-        [competition_url]: competition,
-      },
-    },
-  }
 }
 
 export async function getStaticPaths() {
@@ -144,11 +125,24 @@ export async function getStaticPaths() {
 
   const competitions = await res.json()
 
-  const ids = competitions.map((competition) => competition.id)
-  const paths = ids.map((id) => ({ params: { id: id.toString() } }))
+  const paths = competitions.map((competition) => ({
+    params: { id: competition.id.toString() },
+  }))
 
   return {
     paths,
-    fallback: true,
+    fallback: 'blocking',
+  }
+}
+
+export async function getStaticProps({ params: { id } }) {
+  const res = await fetch(`${api}/competitions/${id}`)
+  const competition = await res.json()
+
+  return {
+    props: {
+      competition,
+    },
+    revalidate: 1,
   }
 }
