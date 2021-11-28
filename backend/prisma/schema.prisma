@@ -60,7 +60,7 @@ model Rating {
   userId       Int
   submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   submissionId Int
-  rating       Int
+  rating       Float
 }
 
 model Participant {
