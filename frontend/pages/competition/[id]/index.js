@@ -38,10 +38,10 @@ export default function Competition({ competition }) {
         <Row>
           <Col
             className="position-absolute"
-            style={{ top: '0.5rem', left: '0.8rem' }}
+            style={{ top: '0.5rem', left: '0.8rem', width: '67%' }}
           >
             <h2>{competition.title}</h2>
-            <p> {competition.description}</p>
+            <span className="text-break">{competition.description}</span>
           </Col>
           <Col>
             <div

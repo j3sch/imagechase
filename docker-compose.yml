@@ -1,21 +1,21 @@
 version: '3.8'
 services:
   backend:
-    build: 
+    build:
       context: ./backend
-      target: base
+      target: production
     volumes:
       - ./backend:/usr/src/app
     ports:
       - '5000:5000'
     depends_on:
       - db
-    command: npm run start:dev
+    # command: npm run start:dev
 
   frontend:
-    build: 
+    build:
       context: ./frontend
-      target: base
+      target: production
     volumes:
       - ./frontend:/usr/src/app
     ports:
@@ -23,7 +23,7 @@ services:
     depends_on:
       - db
       - backend
-    command: npm run dev
+    # command: npm run dev
 
   db:
     image: postgres:14
