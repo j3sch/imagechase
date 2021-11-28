@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form'
 import ReactStars from 'react-stars'
 import { Formik } from 'formik'
 import { useState } from 'react'
-import { api } from '../../config'
+import { api } from '../config'
 
 export default function SubmissionCard({ submission }) {
   const [rating, setRating] = useState(0)

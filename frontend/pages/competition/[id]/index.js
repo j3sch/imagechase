@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import SubmissionList from '../../../components/submission/SubmissionList'
+import SubmissionList from '../../../components/SubmissionList'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
 import { useState, useEffect } from 'react'
@@ -115,7 +115,7 @@ export default function Competition({ competition }) {
           </Col>
         </Row>
       </Container>
-      <SubmissionList submissions={data} />
+      <SubmissionList competitionId={competition.id} />
     </>
   )
 }
