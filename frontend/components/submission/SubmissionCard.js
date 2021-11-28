@@ -19,7 +19,7 @@ export default function SubmissionCard({ submission }) {
   }
 
   const user = {
-    judge: true,
+    judge: false,
   }
 
   return (

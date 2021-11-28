@@ -143,6 +143,5 @@ export async function getStaticProps({ params: { id } }) {
     props: {
       competition,
     },
-    revalidate: 1,
   }
 }
