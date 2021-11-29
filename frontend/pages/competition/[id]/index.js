@@ -106,10 +106,11 @@ export default function Competition({ competition }) {
                 />
                 {competition.participantCount}
               </div>
-              <Link href="/">
-                <Button variant="outline-secondary" size="md">
-                  JOIN COMPETITION
-                </Button>
+              <Link
+                href="/competition/[id]/join"
+                as={`/competition/${competition.id}/join`}
+              >
+                <Button variant="outline-secondary">JOIN COMPETITION</Button>
               </Link>
             </div>
           </Col>

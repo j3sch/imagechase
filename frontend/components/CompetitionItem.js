@@ -13,6 +13,7 @@ export default function CompetitionItem({ competition, number }) {
       >
         <Card.Img
           variant="top"
+          height={265}
           src={`https://source.unsplash.com/300x200/?${competition.type}`}
           style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}
         />
@@ -43,7 +44,7 @@ export default function CompetitionItem({ competition, number }) {
           </Card.Text>
           <Link
             href="/competition/[id]/join"
-            as={`competition/${competition.id}/join`}
+            as={`/competition/${competition.id}/join`}
           >
             <Button variant="outline-secondary">JOIN COMPETITION</Button>
           </Link>

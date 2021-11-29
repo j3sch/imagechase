@@ -29,7 +29,7 @@ export default function Navigation() {
             <Link href="/leaderboard" passHref>
               <Nav.Link>Leaderboard</Nav.Link>
             </Link>
-            <Link href="#coming" passHref>
+            <Link href="/prices" passHref>
               <Nav.Link>Prices</Nav.Link>
             </Link>
           </Nav>
