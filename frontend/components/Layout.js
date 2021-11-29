@@ -8,14 +8,9 @@ import checkUser from '../lib/checkUser'
 
 export default function Layout({ children }) {
   const { user, isLoading } = useUser()
-  const { compUser, loading } = useCompUser(user)
 
   if (!isLoading && user) {
     const userId = checkUser(user)
-  }
-
-  if (compUser) {
-    console.log(compUser)
   }
 
   return (

@@ -8,6 +8,7 @@ export default function useCompUser(user) {
   if (typeof user !== 'undefined') {
     query = true
   }
+
   const { data, error } = useSWR(
     () => (query ? `${api}/users/${user.sub}` : null),
     fetcher

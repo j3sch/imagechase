@@ -10,16 +10,17 @@ import ReactStars from 'react-stars'
 import { Formik } from 'formik'
 import { useState } from 'react'
 import { api } from '../config'
+import { useUser } from '@auth0/nextjs-auth0'
+import useCompUser from '../hooks/use-comp-user'
 
 export default function SubmissionCard({ submission }) {
   const [rating, setRating] = useState(0)
+  const { user, isLoading } = useUser()
+  const [isSubmited, setSubmited] = useState(false)
+  const { compUser, loading } = useCompUser(user)
 
   const ratingChanged = (newRating) => {
     setRating(newRating)
-  }
-
-  const user = {
-    judge: false,
   }
 
   return (
@@ -55,7 +56,7 @@ export default function SubmissionCard({ submission }) {
               <Card.Text className="mt-3">
                 <p>{submission.description}</p>
               </Card.Text>
-              {user.judge && (
+              {compUser !== undefined && compUser.judge && !isSubmited && (
                 <div>
                   <Formik
                     onSubmit={(values) => {
@@ -78,6 +79,7 @@ export default function SubmissionCard({ submission }) {
                         .catch((error) => {
                           console.error('Error:', error)
                         })
+                      setSubmited(true)
                     }}
                     initialValues={{
                       feedback: '',
