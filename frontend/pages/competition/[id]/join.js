@@ -4,11 +4,11 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import Accordion from 'react-bootstrap/Accordion'
+import Badge from 'react-bootstrap/Badge'
 import Form from 'react-bootstrap/Form'
 import { Formik } from 'formik'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import formatDatetime from '../../../lib/dateHelper'
 
 const validate = (values) => {
   const errors = {}
@@ -25,16 +25,53 @@ export default function JoinCompetition({ competition }) {
   const { id } = router.query
 
   return (
-    <div className={'w-75 mx-auto'}>
-      <Container className="align-items-center p-4 bg-light bg-opacity-25 mb-5">
-        <h3>{competition.title}</h3>
-        <div className="d-flex text-text-light-blue rounded fs-5 fw-bold text-center">
-          <i
-            className="bi bi-people-fill me-2"
-            style={{ fontSize: '1.3rem' }}
-          />
-          {competition.participantCount}
-        </div>
+    <div className={'w-lg-75 mx-auto'}>
+      <Container className="align-items-center p-4 bg-light bg-opacity-25 border mb-5">
+        <Row className={'mb-3'}>
+          <Col xs={12} lg={7}>
+            <Row>
+              <h3 className={'text-center text-lg-start'}>
+                {competition.title}
+              </h3>
+            </Row>
+            <Row
+              className={
+                'text-uppercase text-decoration-underline fw-light px-3 mb-2 justify-content-center justify-content-lg-start'
+              }
+              style={{ letterSpacing: '0.15rem' }}
+            >
+              {competition.type}
+            </Row>
+          </Col>
+          <Col>
+            <Row
+              className={'justify-content-center justify-content-lg-end mb-3'}
+            >
+              <Badge bg="light" className={'text-text-light-blue w-auto p-2 '}>
+                <i
+                  className="bi bi-people-fill me-2"
+                  style={{ fontSize: '1.3rem' }}
+                />
+                <span className={'fs-5 fw-bold'}>
+                  {competition.participantCount}
+                </span>
+              </Badge>
+            </Row>
+            <Row
+              className={'justify-content-center justify-content-lg-end my-1'}
+            >
+              <span className={'fw-bolder me-1 w-auto'}>Start date:</span>
+              {formatDatetime(competition.startDate)}
+            </Row>
+
+            <Row
+              className={'justify-content-center justify-content-lg-end my-1'}
+            >
+              <span className={'fw-bolder me-1 w-auto'}>End date:</span>
+              {formatDatetime(competition.endDate)}
+            </Row>
+          </Col>
+        </Row>
         <div>
           <h5>Instructions</h5>
           <p>{competition.instructions}</p>
@@ -112,10 +149,11 @@ export default function JoinCompetition({ competition }) {
                   {errors.description}
                 </Form.Control.Feedback>
               </Form.Group>
-
-              <Button variant="primary" type="submit">
-                JOIN COMPETITION
-              </Button>
+              <Row className={'justify-content-center'}>
+                <Button className={'w-auto'} variant="primary" type="submit">
+                  JOIN COMPETITION
+                </Button>
+              </Row>
             </Form>
           )}
         </Formik>

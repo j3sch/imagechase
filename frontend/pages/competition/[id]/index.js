@@ -5,114 +5,94 @@ import Spinner from 'react-bootstrap/Spinner'
 import { useState, useEffect } from 'react'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Badge from 'react-bootstrap/Badge'
 import Container from 'react-bootstrap/Container'
 import { useRouter } from 'next/router'
 import useCompetition from '../../../hooks/use-competition'
 import useSWR, { SWRConfig } from 'swr'
 import { api } from '../../../config'
+import formatDatetime from '../../../lib/dateHelper'
 
-const fetcher = (url) => fetch(url).then((res) => res.json())
-export const useMounted = () => {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  return mounted
-}
+// const fetcher = (url) => fetch(url).then((res) => res.json())
+// export const useMounted = () => {
+//   const [mounted, setMounted] = useState(false)
+//   useEffect(() => setMounted(true), [])
+//   return mounted
+// }
 
 export default function Competition({ competition }) {
-  const mounted = useMounted()
-  const { data, error } = useSWR(
-    () =>
-      mounted ? `${api}/competitions/${competition.id}/submissions` : null,
-    fetcher
-  )
+  // const mounted = useMounted()
+  // const { data, error } = useSWR(
+  //   () =>
+  //     mounted ? `${api}/competitions/${competition.id}/submissions` : null,
+  //   fetcher
+  // )
 
-  if (error) return <div>{error}</div>
-  if (!data) return <div>loading...</div>
+  // if (error) return <div>{error}</div>
+  // if (!data) return <div>loading...</div>
 
   return (
     <>
-      <Container
-        className="align-items-center mb-3 position-relative border"
-        style={{ height: '10rem', backgroundColor: 'rgba(0,23,56, 0.08)' }}
-      >
-        <Row>
-          <Col
-            className="position-absolute"
-            style={{ top: '0.5rem', left: '0.8rem', width: '67%' }}
-          >
-            <h2>{competition.title}</h2>
-            <span className="text-break">{competition.description}</span>
+      <Container className="align-items-center p-4 bg-light bg-opacity-25 border mb-5">
+        <Row className={'mb-3'}>
+          <Col xs={12} lg={7}>
+            <Row>
+              <h3 className={'text-center text-lg-start'}>
+                {competition.title}
+              </h3>
+            </Row>
+            <Row
+              className={
+                'text-uppercase text-decoration-underline fw-light px-3 justify-content-center justify-content-lg-start'
+              }
+              style={{ letterSpacing: '0.15rem' }}
+            >
+              {competition.type}
+            </Row>
+            <Row className={'p-3 text-center text-lg-start'}>
+              {competition.description}
+            </Row>
           </Col>
-          <Col>
-            <div
-              className="position-absolute"
-              style={{ right: '1rem', top: '1rem' }}
+          <Col className={'px-4'}>
+            <Row
+              className={
+                'justify-content-center justify-content-lg-end mt-0 mb-3'
+              }
             >
-              <p
-                className="position-absolute fw-bolder"
-                style={{
-                  top: '0.12rem',
-                  right: '9.07rem',
-                  whiteSpace: 'nowrap',
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.05rem',
-                }}
-              >
-                START-DATE:{' '}
-              </p>
-              <p>
-                {new Intl.DateTimeFormat('en-GB', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                }).format(new Date(competition.startDate))}
-              </p>
-              <p
-                className="position-absolute fw-bolder"
-                style={{
-                  top: '2.61rem',
-                  right: '10rem',
-                  whiteSpace: 'nowrap',
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.05rem',
-                }}
-              >
-                END-DATE:{'  '}
-              </p>
-              <p>
-                {new Intl.DateTimeFormat('en-GB', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                }).format(new Date(competition.endDate))}
-              </p>
-            </div>
-            <div
-              className="position-absolute position-relative"
-              style={{ right: '1rem', top: '6.5rem' }}
-            >
-              <div
-                className="d-flex text-text-light-blue rounded fs-5 fw-bold text-center position-absolute"
-                style={{
-                  paddingTop: '0.2rem',
-                  paddingBottom: '0.2rem',
-                  paddingLeft: '0.6rem',
-                  paddingRight: '0.6rem',
-                  right: '11.5rem',
-                  backgroundColor: 'rgba(0,23,56, 0.05)',
-                }}
+              <Badge
+                bg="light"
+                className={'text-text-light-blue w-auto p-2 me-2'}
               >
                 <i
                   className="bi bi-people-fill me-2"
                   style={{ fontSize: '1.3rem' }}
                 />
-                {competition.participantCount}
-              </div>
+                <span className={'fs-5 fw-bold'}>
+                  {competition.participantCount}
+                </span>
+              </Badge>
               <Link
                 href="/competition/[id]/join"
                 as={`/competition/${competition.id}/join`}
               >
-                <Button variant="outline-secondary">JOIN COMPETITION</Button>
+                <Button className={'w-auto'} variant="outline-secondary">
+                  JOIN COMPETITION
+                </Button>
               </Link>
-            </div>
+            </Row>
+            <Row
+              className={'justify-content-center justify-content-lg-end mb-1'}
+            >
+              <span className={'fw-bolder me-1 w-auto'}>Start date:</span>
+              {formatDatetime(competition.startDate)}
+            </Row>
+
+            <Row
+              className={'justify-content-center justify-content-lg-end my-1'}
+            >
+              <span className={'fw-bolder me-1 w-auto'}>End date:</span>
+              {formatDatetime(competition.endDate)}
+            </Row>
           </Col>
         </Row>
       </Container>

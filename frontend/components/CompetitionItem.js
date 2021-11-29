@@ -2,14 +2,16 @@ import Link from 'next/link'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
+import formatDatetime from '../lib/dateHelper'
 import clsx from 'clsx'
 
-export default function CompetitionItem({ competition, number }) {
+export default function CompetitionItem({ competition }) {
   return (
     <Link href="/competition/[id]" as={`competition/${competition.id}`}>
       <Card
         style={cardStyle}
-        className={clsx(number % 3 === 1 && 'mx-5', 'my-4')}
+        className={'competitionCard m-3'}
+        // className={ clsx(number % 3 === 1 && 'mx-5', 'my-4')}
       >
         <Card.Img
           variant="top"
@@ -34,12 +36,7 @@ export default function CompetitionItem({ competition, number }) {
               >
                 Starts at
               </div>
-              <div>
-                {new Intl.DateTimeFormat('en-GB', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                }).format(new Date(competition.startDate))}
-              </div>
+              <div>{formatDatetime(competition.startDate)}</div>
             </Container>
           </Card.Text>
           <Link
