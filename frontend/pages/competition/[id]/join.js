@@ -9,6 +9,7 @@ import Form from 'react-bootstrap/Form'
 import { Formik } from 'formik'
 import { useRouter } from 'next/router'
 import formatDatetime from '../../../lib/dateHelper'
+import useCompUser from '../../../hooks/use-comp-user'
 
 const validate = (values) => {
   const errors = {}
@@ -23,6 +24,7 @@ const validate = (values) => {
 export default function JoinCompetition({ competition }) {
   const router = useRouter()
   const { id } = router.query
+  const { compUser } = useCompUser()
 
   return (
     <div className={'w-lg-75 mx-auto'}>
@@ -87,7 +89,7 @@ export default function JoinCompetition({ competition }) {
             const submissionData = {
               content: 'imagepath',
               description: values.description,
-              userId: 1,
+              userId: compUser.id,
               competitionId: parseInt(id),
             }
             console.log(submissionData)
@@ -99,12 +101,8 @@ export default function JoinCompetition({ competition }) {
               body: JSON.stringify(submissionData),
             })
               .then((response) => response.json())
-              .then((data) => {
-                console.log('Success:', data)
+              .then(() => {
                 router.push('/')
-              })
-              .catch((error) => {
-                console.error('Error:', error)
               })
           }}
           validate={validate}

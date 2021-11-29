@@ -12,24 +12,7 @@ import useSWR, { SWRConfig } from 'swr'
 import { api } from '../../../config'
 import formatDatetime from '../../../lib/dateHelper'
 
-// const fetcher = (url) => fetch(url).then((res) => res.json())
-// export const useMounted = () => {
-//   const [mounted, setMounted] = useState(false)
-//   useEffect(() => setMounted(true), [])
-//   return mounted
-// }
-
 export default function Competition({ competition }) {
-  // const mounted = useMounted()
-  // const { data, error } = useSWR(
-  //   () =>
-  //     mounted ? `${api}/competitions/${competition.id}/submissions` : null,
-  //   fetcher
-  // )
-
-  // if (error) return <div>{error}</div>
-  // if (!data) return <div>loading...</div>
-
   return (
     <>
       <Container className="align-items-center p-4 bg-light bg-opacity-25 border mb-5">

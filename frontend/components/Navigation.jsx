@@ -40,7 +40,7 @@ export default function Navigation() {
           <Nav className={'align-items-lg-center'}>
             {!user && (
               <a href="/api/auth/login">
-                <Button variant="outline-light">SIGN IN/UP</Button>
+                <Button variant="outline-light">SIGN UP</Button>
               </a>
             )}
             {user && (

@@ -3,6 +3,8 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import { Formik } from 'formik'
 import { api } from '../../config'
+import { useRouter } from 'next/router'
+import useCompUser from '../../hooks/use-comp-user'
 
 const validate = (values) => {
   const errors = {}
@@ -47,7 +49,9 @@ const validate = (values) => {
 }
 
 export default function createCompetitionForm() {
+  const router = useRouter()
   const currentDate = new Date()
+  const { compUser } = useCompUser()
 
   return (
     <Container className={'w-75 mb-5'}>
@@ -62,7 +66,7 @@ export default function createCompetitionForm() {
             rules: values.description,
             startDate: new Date(values.startDate).toISOString(),
             endDate: new Date(values.endDate).toISOString(),
-            userId: 1,  
+            userId: compUser.id,
           }
           fetch(`${api}/competitions`, {
             method: 'POST',
@@ -72,15 +76,9 @@ export default function createCompetitionForm() {
             body: JSON.stringify(competitionData),
           })
             .then((response) => response.json())
-            .then((data) => {
-              console.log('Success:', data)
+            .then(() => {
+              router.push('/')
             })
-            .catch((error) => {
-              console.error('Error:', error)
-            })
-          // postData(`${api}/competitions`, values).then((data) => {
-          //   console.log(data) // JSON data parsed by `data.json()` call
-          // })
         }}
         validate={validate}
         initialValues={{
