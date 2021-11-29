@@ -10,11 +10,13 @@ import ReactStars from 'react-stars'
 import { Formik } from 'formik'
 import { useState } from 'react'
 import { api } from '../config'
+import { useUser } from '@auth0/nextjs-auth0'
+import useCompUser from '../hooks/use-comp-user'
 
 export default function SubmissionCard({ submission }) {
-  const user = {
-    judge: true,
-  }
+  const { user, isLoading } = useUser()
+  const [isSubmited, setSubmited] = useState(false)
+  const { compUser, loading } = useCompUser(user)
 
   return (
     <Card>

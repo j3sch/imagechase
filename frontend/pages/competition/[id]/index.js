@@ -7,7 +7,6 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Badge from 'react-bootstrap/Badge'
 import Container from 'react-bootstrap/Container'
-import { useRouter } from 'next/router'
 import useCompetition from '../../../hooks/use-competition'
 import useSWR, { SWRConfig } from 'swr'
 import { api } from '../../../config'
@@ -112,7 +111,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: 'blocking',
+    fallback: true,
   }
 }
 
@@ -124,5 +123,6 @@ export async function getStaticProps({ params: { id } }) {
     props: {
       competition,
     },
+    revalidate: 1,
   }
 }
