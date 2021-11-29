@@ -16,10 +16,10 @@ export class UserController {
     return this.prismaService.user.findMany();
   }
 
-  @Get(':id')
-  getUserById(@Param('id') id: string): Promise<UserModel> {
+  @Get(':sub')
+  getUserById(@Param('sub') sub: string): Promise<UserModel> {
     return this.prismaService.user.findUnique({
-      where: { id: Number(id) },
+      where: { sub },
     });
   }
 
@@ -82,34 +82,36 @@ export class UserController {
   async createUser(
     @Body()
     userData: {
+      id: string;
       name: string;
       email: string;
-      password: string;
       judge: string;
       bio: string;
+      sub: string;
     },
   ): Promise<UserModel | ErrorMessage> {
-    const { name, email, password, judge, bio } = userData;
-    const emailExist: { email: string } =
-      await this.prismaService.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-    if (emailExist === null) {
+    const { id, name, email, judge, bio, sub } = userData;
+    const userId: { id: number } = await this.prismaService.user.findUnique({
+      where: {
+        email: email,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (userId === null) {
       return this.prismaService.user.create({
         data: {
           name,
           email,
-          password,
           judge: judge === 'true',
           bio,
+          sub,
         },
       });
     } else {
       return {
-        message:
-          'This email already exists. If you have forgotten your password, please reset it.',
+        message: 'User exits',
       };
     }
   }

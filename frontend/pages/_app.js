@@ -2,11 +2,15 @@ import Layout from '../components/Layout'
 import '../styles/scss/globals.scss'
 import '../styles/globals.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import { UserProvider } from '@auth0/nextjs-auth0'
 
 export default function MyApp({ Component, pageProps }) {
+
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <UserProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </UserProvider>
   )
 }

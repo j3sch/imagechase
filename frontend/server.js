@@ -3,9 +3,9 @@ const express = require('express')
 const next = require('next')
 
 const devProxy = {
-  '/api': {
+  '/backend': {
     target: 'http://backend:5000',
-    pathRewrite: { '^/api': '/' },
+    pathRewrite: { '^/backend': '/' },
     changeOrigin: true,
   },
 }
