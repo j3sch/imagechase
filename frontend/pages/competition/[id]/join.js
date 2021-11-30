@@ -47,7 +47,9 @@ export default function JoinCompetition({ competition }) {
           </Col>
           <Col>
             <Row
-              className={'justify-content-center justify-content-lg-end mb-3'}
+              className={
+                'justify-content-center justify-content-lg-end mb-3 px-3'
+              }
             >
               <Badge bg="light" className={'text-text-light-blue w-auto p-2 '}>
                 <i
@@ -60,14 +62,18 @@ export default function JoinCompetition({ competition }) {
               </Badge>
             </Row>
             <Row
-              className={'justify-content-center justify-content-lg-end my-1'}
+              className={
+                'justify-content-center justify-content-lg-end my-1 px-3'
+              }
             >
               <span className={'fw-bolder me-1 w-auto'}>Start date:</span>
               {formatDatetime(competition.startDate)}
             </Row>
 
             <Row
-              className={'justify-content-center justify-content-lg-end my-1'}
+              className={
+                'justify-content-center justify-content-lg-end my-1 px-3'
+              }
             >
               <span className={'fw-bolder me-1 w-auto'}>End date:</span>
               {formatDatetime(competition.endDate)}
@@ -99,6 +105,16 @@ export default function JoinCompetition({ competition }) {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(submissionData),
+            })
+            const participantData = {
+              userId: compUser.id,
+            }
+            fetch(`${api}/competitions/${competition.id}/participants`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(participantData),
             })
               .then((response) => response.json())
               .then(() => {
