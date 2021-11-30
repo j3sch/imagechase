@@ -19,7 +19,10 @@ export default function Footer() {
             style={{ fontSize: '1.3rem' }}
           ></i>
 
-          <Link href="https://github.com/J3ns6/it-competition-platform">
+          <Link
+            href="https://github.com/J3ns6/it-competition-platform"
+            passHref
+          >
             <i
               className={'bi bi-github px-2'}
               style={{ fontSize: '1.3rem' }}

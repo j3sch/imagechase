@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   User as UserModel,
@@ -76,6 +76,26 @@ export class UserController {
       Object.assign(competitions[i], { participantCount });
     }
     return competitions;
+  }
+
+  @Put(':id/toggleJudge')
+  async toggleJudge(
+    @Param('id') id: string,
+  
+  ): Promise<UserModel> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: Number(id) },
+      select: {
+        judge: true
+      }
+    })
+
+    return this.prismaService.user.update({
+      where: { id: Number(id) },
+      data: {
+        judge: !user.judge
+      },
+    });
   }
 
   @Post()

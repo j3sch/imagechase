@@ -7,8 +7,6 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Badge from 'react-bootstrap/Badge'
 import Container from 'react-bootstrap/Container'
-import useCompetition from '../../../hooks/use-competition'
-import useSWR, { SWRConfig } from 'swr'
 import { api } from '../../../config'
 import formatDatetime from '../../../lib/dateHelper'
 
@@ -20,7 +18,7 @@ export default function Competition({ competition }) {
           <Col xs={12} lg={7}>
             <Row>
               <h3 className={'text-center text-lg-start'}>
-                {competition.title}
+                {competition ? competition.title : ''}
               </h3>
             </Row>
             <Row
@@ -29,10 +27,10 @@ export default function Competition({ competition }) {
               }
               style={{ letterSpacing: '0.15rem' }}
             >
-              {competition.type}
+              {competition ? competition.type : ''}
             </Row>
             <Row className={'p-3 text-center text-lg-start'}>
-              {competition.description}
+              {competition ? competition.description : ''}
             </Row>
           </Col>
           <Col className={'px-4'}>
@@ -50,12 +48,13 @@ export default function Competition({ competition }) {
                   style={{ fontSize: '1.3rem' }}
                 />
                 <span className={'fs-5 fw-bold'}>
-                  {competition.participantCount}
+                  {competition ? competition.participantCount : ''}
                 </span>
               </Badge>
               <Link
                 href="/competition/[id]/join"
-                as={`/competition/${competition.id}/join`}
+                as={`/competition/${competition ? competition.id : ''}/join`}
+                passHref
               >
                 <Button className={'w-auto'} variant="outline-secondary">
                   JOIN COMPETITION
@@ -66,19 +65,19 @@ export default function Competition({ competition }) {
               className={'justify-content-center justify-content-lg-end mb-1'}
             >
               <span className={'fw-bolder me-1 w-auto'}>Start date:</span>
-              {formatDatetime(competition.startDate)}
+              {formatDatetime(competition ? competition.startDate : null)}
             </Row>
 
             <Row
               className={'justify-content-center justify-content-lg-end my-1'}
             >
               <span className={'fw-bolder me-1 w-auto'}>End date:</span>
-              {formatDatetime(competition.endDate)}
+              {formatDatetime(competition ? competition.endDate : null)}
             </Row>
           </Col>
         </Row>
       </Container>
-      <SubmissionList competitionId={competition.id} />
+      <SubmissionList competitionId={competition ? competition.id : ''} />
     </>
   )
 }

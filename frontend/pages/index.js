@@ -14,7 +14,7 @@ export default function Home() {
         <h1>Home</h1>
         {compUser !== undefined && compUser.judge && (
           <div>
-            <Link href="/competition/create">
+            <Link href="/competition/create" passHref>
               <Button variant="outline-secondary">CREATE COMPETITION</Button>
             </Link>
           </div>

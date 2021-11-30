@@ -50,7 +50,7 @@ export default function SubmissionCard({ submission }) {
             <Card.Text as="Row" className="mt-3">
               {submission.description}
             </Card.Text>
-            <Row>{ratingForm(compUser, submission)}</Row>
+            <Row>{RatingForm(compUser, submission)}</Row>
           </Card.Body>
         </Col>
       </Row>
@@ -58,7 +58,7 @@ export default function SubmissionCard({ submission }) {
   )
 }
 
-const ratingForm = (user, submission) => {
+const RatingForm = (user, submission) => {
   const [rating, setRating] = useState(0)
   const [isSubmited, setSubmited] = useState(false)
 

@@ -126,7 +126,7 @@ export default function JoinCompetition({ competition }) {
                 <Form.Control type="file" name="content" disabled />
                 <Form.Text className="text-muted">
                   In the future you will be able to add your submission here.
-                  We'll never share your email with anyone else.
+                  We&apos;ll never share your email with anyone else.
                 </Form.Text>
               </Form.Group>
               {/* description */}

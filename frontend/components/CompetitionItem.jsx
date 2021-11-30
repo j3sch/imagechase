@@ -7,7 +7,11 @@ import clsx from 'clsx'
 
 export default function CompetitionItem({ competition }) {
   return (
-    <Link href="/competition/[id]" as={`competition/${competition.id}`}>
+    <Link
+      href="/competition/[id]"
+      as={`competition/${competition.id}`}
+      passHref
+    >
       <Card
         style={cardStyle}
         className={'competitionCard m-3'}
@@ -42,6 +46,7 @@ export default function CompetitionItem({ competition }) {
           <Link
             href="/competition/[id]/join"
             as={`/competition/${competition.id}/join`}
+            passHref
           >
             <Button variant="outline-secondary">JOIN COMPETITION</Button>
           </Link>

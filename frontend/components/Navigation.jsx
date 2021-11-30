@@ -39,16 +39,16 @@ export default function Navigation() {
           </Nav>
           <Nav className={'align-items-lg-center'}>
             {!user && (
-              <a href="/api/auth/login">
+              <Link href="/api/auth/login" passHref>
                 <Button variant="outline-light">SIGN UP</Button>
-              </a>
+              </Link>
             )}
             {user && (
               <div className="d-flex align-items-center">
                 <span className="text-light pe-4">{user.nickname}</span>
-                <a href="/api/auth/logout">
+                <Link href="/api/auth/logout" passHref>
                   <Button variant="outline-light">LOGOUT</Button>
-                </a>
+                </Link>
               </div>
             )}
           </Nav>

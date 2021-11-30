@@ -48,7 +48,7 @@ const validate = (values) => {
   return errors
 }
 
-export default function createCompetitionForm() {
+export default function CreateCompetitionForm() {
   const router = useRouter()
   const currentDate = new Date()
   const { compUser } = useCompUser()
