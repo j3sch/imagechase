@@ -9,8 +9,13 @@ import Badge from 'react-bootstrap/Badge'
 import Container from 'react-bootstrap/Container'
 import { api } from '../../../config'
 import formatDatetime from '../../../lib/dateHelper'
+import useCompUser from '../../../hooks/use-comp-user'
+import { useUser } from '@auth0/nextjs-auth0'
+import useIsUserCompJoined from '../../../hooks/use-is-user-comp-joined'
 
 export default function Competition({ competition }) {
+  const { isJoined } = useIsUserCompJoined(competition)
+
   return (
     <>
       <Container className="align-items-center p-4 bg-light bg-opacity-25 border mb-5">
@@ -48,18 +53,28 @@ export default function Competition({ competition }) {
                   style={{ fontSize: '1.3rem' }}
                 />
                 <span className={'fs-5 fw-bold'}>
-                  {competition ? competition.participantCount : ''}
+                  {competition ? competition.Participant.length : ''}
                 </span>
               </Badge>
-              <Link
-                href="/competition/[id]/join"
-                as={`/competition/${competition ? competition.id : ''}/join`}
-                passHref
-              >
-                <Button className={'w-auto'} variant="outline-secondary">
-                  JOIN COMPETITION
+              {isJoined ? (
+                <Button
+                  className={'w-auto'}
+                  variant="outline-secondary"
+                  disabled={true}
+                >
+                  ALREADY JOINT
                 </Button>
-              </Link>
+              ) : (
+                <Link
+                  href="/competition/[id]/join"
+                  as={`/competition/${competition ? competition.id : ''}/join`}
+                  passHref
+                >
+                  <Button className={'w-auto'} variant="outline-secondary">
+                    JOIN COMPETITION
+                  </Button>
+                </Link>
+              )}
             </Row>
             <Row
               className={'justify-content-center justify-content-lg-end mb-1'}

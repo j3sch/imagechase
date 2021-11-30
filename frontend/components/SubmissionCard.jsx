@@ -47,9 +47,11 @@ export default function SubmissionCard({ submission }) {
                 </Card.Text>
               </Container>
             </Row>
-            <Card.Text as="Row" className="mt-3">
-              {submission.description}
-            </Card.Text>
+            <div style={{ minHeight: '5.5rem' }}>
+              <Card.Text as="Row" className="mt-3 h">
+                {submission.description}
+              </Card.Text>
+            </div>
             <Row>{RatingForm(compUser, submission)}</Row>
           </Card.Body>
         </Col>

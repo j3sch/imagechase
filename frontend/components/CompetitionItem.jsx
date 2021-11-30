@@ -4,8 +4,11 @@ import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import formatDatetime from '../lib/dateHelper'
 import clsx from 'clsx'
+import useIsUserCompJoined from '../hooks/use-is-user-comp-joined'
 
 export default function CompetitionItem({ competition }) {
+  const { isJoined } = useIsUserCompJoined(competition)
+
   return (
     <Link
       href="/competition/[id]"
@@ -43,13 +46,25 @@ export default function CompetitionItem({ competition }) {
               <div>{formatDatetime(competition.startDate)}</div>
             </Container>
           </Card.Text>
-          <Link
-            href="/competition/[id]/join"
-            as={`/competition/${competition.id}/join`}
-            passHref
-          >
-            <Button variant="outline-secondary">JOIN COMPETITION</Button>
-          </Link>
+          {isJoined ? (
+            <Button
+              className={'w-auto'}
+              variant="outline-secondary"
+              disabled={true}
+            >
+              ALREADY JOINT
+            </Button>
+          ) : (
+            <Link
+              href="/competition/[id]/join"
+              as={`/competition/${competition.id}/join`}
+              passHref
+            >
+              <Button className={'w-auto'} variant="outline-secondary">
+                JOIN COMPETITION
+              </Button>
+            </Link>
+          )}
         </Card.Body>
       </Card>
     </Link>

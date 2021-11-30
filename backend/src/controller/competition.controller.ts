@@ -14,7 +14,7 @@ import {
   Participant as ParticipantsModel,
   User as UserModel,
 } from '@prisma/client';
-import { CompetitionParticipantModel, ErrorMessage } from 'src/types';
+import { ErrorMessage } from 'src/types';
 
 @Controller('competitions')
 export class CompetitionController {
@@ -22,39 +22,42 @@ export class CompetitionController {
 
   @Get()
   async getAllCompetitions(): Promise<object[]> {
-    let competitions = await this.prismaService.competition.findMany({
+    return await this.prismaService.competition.findMany({
       orderBy: [
         {
           createdAt: 'desc',
         },
       ],
-    });
-    for (let i = 0; i < competitions.length; i++) {
-      const participants = await this.prismaService.participant.findMany({
-        where: {
-          competitionId: competitions[i].id,
+      include: {
+        Participant: {
+          include: {
+            user: {
+              select: {
+                sub: true,
+              },
+            },
+          },
         },
-      });
-      const participantCount = participants.length;
-      Object.assign(competitions[i], { participantCount });
-    }
-    return competitions;
+      },
+    });
   }
 
   @Get(':id')
-  async getCompetitionById(
-    @Param('id') id: string,
-  ): Promise<CompetitionParticipantModel> {
-    const competition = await this.prismaService.competition.findUnique({
+  async getCompetitionById(@Param('id') id: string): Promise<CompetitionModel> {
+    return await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
-    });
-    const particpants = await this.prismaService.participant.findMany({
-      where: {
-        competitionId: Number(id),
+      include: {
+        Participant: {
+          include: {
+            user: {
+              select: {
+                sub: true,
+              },
+            },
+          },
+        },
       },
     });
-    const participantCount = particpants.length;
-    return Object.assign(competition, { participantCount });
   }
 
   @Get(':id/submissions')
