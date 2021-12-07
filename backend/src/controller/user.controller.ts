@@ -2,8 +2,6 @@ import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   User as UserModel,
-  Submission as SubmissionModel,
-  Competition as CompetitionModel,
 } from '@prisma/client';
 import { ErrorMessage } from 'src/types';
 
@@ -23,77 +21,19 @@ export class UserController {
     });
   }
 
-  @Get(':id/submissions')
-  async getSubmissionsFromUser(
-    @Param('id') id: string,
-    @Body()
-    settings: {
-      skip: number;
-      take: number;
-      order: string;
-    },
-  ): Promise<SubmissionModel[]> {
-    const { skip, take, order } = settings;
-    return await this.prismaService.submission.findMany({
-      skip,
-      take,
-      where: {
-        userId: Number(id),
-      },
-      orderBy: [
-        order === 'votes'
-          ? {
-              rating: 'desc',
-            }
-          : {
-              createdAt: 'desc',
-            },
-      ],
-    });
-  }
-
-  @Get(':id/competitions')
-  async getCompetitionsFromUser(
-    @Param('id') id: string,
-  ): Promise<CompetitionModel[]> {
-    const competitions = await this.prismaService.competition.findMany({
-      where: {
-        userId: Number(id),
-      },
-      orderBy: [
-        {
-          createdAt: 'desc',
-        },
-      ],
-    });
-    for (let i = 0; i < competitions.length; i++) {
-      const particpants = await this.prismaService.participant.findMany({
-        where: {
-          competitionId: competitions[i].id,
-        },
-      });
-      const participantCount = particpants.length;
-      Object.assign(competitions[i], { participantCount });
-    }
-    return competitions;
-  }
-
-  @Put(':id/toggleJudge')
-  async toggleJudge(
-    @Param('id') id: string,
-  
-  ): Promise<UserModel> {
+  @Put(':id/toggleAdmin')
+  async toggleAdmin(@Param('id') id: string): Promise<UserModel> {
     const user = await this.prismaService.user.findUnique({
       where: { id: Number(id) },
       select: {
-        judge: true
-      }
-    })
+        admin: true,
+      },
+    });
 
     return this.prismaService.user.update({
       where: { id: Number(id) },
       data: {
-        judge: !user.judge
+        admin: !user.admin,
       },
     });
   }
@@ -102,29 +42,25 @@ export class UserController {
   async createUser(
     @Body()
     userData: {
-      id: string;
       name: string;
-      email: string;
       judge: string;
       bio: string;
       sub: string;
     },
   ): Promise<UserModel | ErrorMessage> {
-    const { id, name, email, judge, bio, sub } = userData;
-    const userId: { id: number } = await this.prismaService.user.findUnique({
+    const { name, bio, sub } = userData;
+    const userSub: { sub: string } = await this.prismaService.user.findUnique({
       where: {
-        email: email,
+        sub: sub,
       },
       select: {
-        id: true,
+        sub: true,
       },
     });
-    if (userId === null) {
+    if (userSub === null) {
       return this.prismaService.user.create({
         data: {
           name,
-          email,
-          judge: judge === 'true',
           bio,
           sub,
         },

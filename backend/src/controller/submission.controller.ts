@@ -28,25 +28,6 @@ export class SubmissionController {
     });
   }
 
-  @Put(':id')
-  async updateSubmission(
-    @Param('id') id: string,
-    @Body()
-    submissionData: {
-      content: string;
-      description: string;
-    },
-  ): Promise<SubmissionModel> {
-    const { content, description } = submissionData;
-    return this.prismaService.submission.update({
-      where: { id: Number(id) },
-      data: {
-        content,
-        description,
-      },
-    });
-  }
-
   @Post()
   async createSubmission(
     @Body()
@@ -63,10 +44,10 @@ export class SubmissionController {
         data: {
           content,
           description,
-          user: {
+          User: {
             connect: { id: userId },
           },
-          competition: {
+          Competition: {
             connect: { id: competitionId },
           },
         },
@@ -111,14 +92,5 @@ export class SubmissionController {
       createRating,
       updateSubmissionRating,
     ]);
-  }
-
-  @Delete(':id')
-  async deleteSubmission(@Param('id') id: string): Promise<SubmissionModel> {
-    return await this.prismaService.submission.delete({
-      where: {
-        id: Number(id),
-      },
-    });
   }
 }
