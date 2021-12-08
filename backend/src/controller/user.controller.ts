@@ -1,8 +1,6 @@
 import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import {
-  User as UserModel,
-} from '@prisma/client';
+import { User as UserModel } from '@prisma/client';
 import { ErrorMessage } from 'src/types';
 
 @Controller('users')
@@ -43,12 +41,12 @@ export class UserController {
     @Body()
     userData: {
       name: string;
-      judge: string;
       bio: string;
       sub: string;
     },
-  ): Promise<UserModel | ErrorMessage> {
+  ): Promise<any | ErrorMessage> {
     const { name, bio, sub } = userData;
+    console.log('sub' + sub);
     const userSub: { sub: string } = await this.prismaService.user.findUnique({
       where: {
         sub: sub,
@@ -57,8 +55,9 @@ export class UserController {
         sub: true,
       },
     });
+    console.log(userSub);
     if (userSub === null) {
-      return this.prismaService.user.create({
+      return await this.prismaService.user.create({
         data: {
           name,
           bio,

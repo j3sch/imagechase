@@ -39,25 +39,18 @@ export class SubmissionController {
     },
   ): Promise<SubmissionModel | ErrorMessage> {
     const { content, description, userId, competitionId } = submissionData;
-    try {
-      const created = await this.prismaService.submission.create({
-        data: {
-          content,
-          description,
-          User: {
-            connect: { id: userId },
-          },
-          Competition: {
-            connect: { id: competitionId },
-          },
+    return await this.prismaService.submission.create({
+      data: {
+        content,
+        description,
+        User: {
+          connect: { id: userId },
         },
-      });
-      return created;
-    } catch (e) {
-      return {
-        message: 'record invalid',
-      };
-    }
+        Competition: {
+          connect: { id: competitionId },
+        },
+      },
+    });
   }
 
   @Post(':id/rating')

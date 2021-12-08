@@ -5,7 +5,7 @@ import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import Button from 'react-bootstrap/Button'
 import { useUser } from '@auth0/nextjs-auth0'
-import checkUser from '../lib/checkUser'
+import checkUser from '../lib/checkCreateUser'
 
 export default function Navigation() {
   const { user, error, isLoading } = useUser()

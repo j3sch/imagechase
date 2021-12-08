@@ -1,10 +1,10 @@
+import { useUser } from '@auth0/nextjs-auth0'
 import { api } from '../config'
 
-export default async function checkUser(loggedUser) {
+export default async function checkCreateUser(user) {
   const body = {
-    name: loggedUser.nickname,
-    email: loggedUser.name,
-    sub: loggedUser.sub,
+    name: user.nickname,
+    sub: user.sub.slice(6),
   }
 
   const res = await fetch(`${api}/users`, {

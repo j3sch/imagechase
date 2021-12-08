@@ -28,17 +28,6 @@ export class CompetitionController {
           createdAt: 'desc',
         },
       ],
-      include: {
-        Submission: {
-          include: {
-            User: {
-              select: {
-                sub: true,
-              },
-            },
-          },
-        },
-      },
     });
   }
 
@@ -46,18 +35,33 @@ export class CompetitionController {
   async getCompetitionById(@Param('id') id: string): Promise<CompetitionModel> {
     return await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
-      include: {
+      // include: {
+      //   Submission: {
+      //     select: {
+      //       User: {
+      //         select: {
+      //           sub: true,
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
+    });
+  }
+
+  @Get(':id/participants')
+  async getCompetitionParticipantLength(@Param('id') id: string): Promise<any> {
+    const userIds = await this.prismaService.competition.findUnique({
+      where: { id: Number(id) },
+      select: {
         Submission: {
-          include: {
-            User: {
-              select: {
-                sub: true,
-              },
-            },
+          select: {
+            userId: true,
           },
         },
       },
     });
+    return userIds.Submission.length;
   }
 
   @Get(':id/submissions')
@@ -66,7 +70,6 @@ export class CompetitionController {
     @Param('skip') skip: number,
     @Body()
     settings: {
-   
       take: number;
       order: string;
     },
