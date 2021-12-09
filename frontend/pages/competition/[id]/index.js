@@ -7,6 +7,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Badge from 'react-bootstrap/Badge'
 import Container from 'react-bootstrap/Container'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Tooltip from 'react-bootstrap/Tooltip'
 import { api } from '../../../config'
 import formatDatetime from '../../../lib/dateHelper'
 import useCompUser from '../../../hooks/use-comp-user'
@@ -44,20 +46,28 @@ export default function Competition({ competition }) {
             <Row className={'p-3 text-center text-lg-start'}>
               {compJudges &&
                 compJudges.Judge.map((judge) => (
-                  <Badge
-                    bg="light"
-                    className={
-                      'text-text-light-blue rounded-circle d-flex justify-content-center align-items-center me-2'
+                  <OverlayTrigger
+                    key={judge}
+                    placement="top"
+                    overlay={
+                      <Tooltip id={judge.User.id}>{judge.User.name}</Tooltip>
                     }
-                    style={{ height: '2.8rem', width: '2.8rem' }}
                   >
-                    <span
-                      style={{ fontSize: '1.6rem' }}
-                      className={'fw-bold text-uppercase'}
+                    <Badge
+                      bg="light"
+                      className={
+                        'text-text-light-blue rounded-circle d-flex justify-content-center align-items-center me-2'
+                      }
+                      style={{ height: '2.8rem', width: '2.8rem' }}
                     >
-                      {judge.User.name.slice(0, 1)}
-                    </span>
-                  </Badge>
+                      <span
+                        style={{ fontSize: '1.6rem' }}
+                        className={'fw-bold text-uppercase'}
+                      >
+                        {judge.User.name.slice(0, 1)}
+                      </span>
+                    </Badge>
+                  </OverlayTrigger>
                 ))}
             </Row>
           </Col>
