@@ -46,7 +46,6 @@ export class UserController {
     },
   ): Promise<any | ErrorMessage> {
     const { name, bio, sub } = userData;
-    console.log('sub' + sub);
     const userSub: { sub: string } = await this.prismaService.user.findUnique({
       where: {
         sub: sub,
@@ -55,7 +54,6 @@ export class UserController {
         sub: true,
       },
     });
-    console.log(userSub);
     if (userSub === null) {
       return await this.prismaService.user.create({
         data: {

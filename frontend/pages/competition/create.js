@@ -5,7 +5,7 @@ import { Formik } from 'formik'
 import { api } from '../../config'
 import { useRouter } from 'next/router'
 import useCompUser from '../../hooks/use-comp-user'
-
+import { useRef, useState } from 'react'
 const validate = (values) => {
   const errors = {}
   // title
@@ -52,6 +52,32 @@ export default function CreateCompetitionForm() {
   const router = useRouter()
   const currentDate = new Date()
   const { compUser } = useCompUser()
+  const [imageUrl, setImageUrl] = useState('')
+  const [imageAlt, setImageAlt] = useState('')
+
+  const handleImageUpload = () => {
+    const { files } = document.querySelector('input[type="file"]')
+
+    const formData = new FormData()
+    formData.append('file', files[0])
+    formData.append('upload_preset', 'xbblyy5g')
+
+    const options = {
+      method: 'POST',
+      body: formData,
+    }
+
+    return fetch(
+      'https://api.cloudinary.com/v1_1/dgyi7cmag/image/upload',
+      options
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setImageUrl(res.secure_url)
+        setImageAlt(`An image of ${res.original_filename}`)
+      })
+      .catch((err) => console.log(err))
+  }
 
   return (
     <Container className={'w-75 mb-5'}>
@@ -60,6 +86,8 @@ export default function CreateCompetitionForm() {
         onSubmit={(values) => {
           const competitionData = {
             title: values.title,
+            imageUrl,
+            imageAlt,
             type: values.type,
             description: values.description,
             instructions: values.instructions,
@@ -82,6 +110,7 @@ export default function CreateCompetitionForm() {
         }}
         validate={validate}
         initialValues={{
+          file: '',
           title: '',
           type: 'notype',
           description: '',
@@ -116,6 +145,19 @@ export default function CreateCompetitionForm() {
                 {errors.title}
               </Form.Control.Feedback>
             </Form.Group>
+            {/* content */}
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Label>Select image</Form.Label>
+              <Form.Control type="file" />
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="button"
+              className="mb-3"
+              onClick={handleImageUpload}
+            >
+              Submit
+            </Button>
             {/* type */}
             <Form.Group className="mb-3" controlId="type">
               <Form.Label>Competition Type</Form.Label>
@@ -220,7 +262,6 @@ export default function CreateCompetitionForm() {
                 {errors.endDate}
               </Form.Control.Feedback>
             </Form.Group>
-
             <Button variant="primary" type="submit">
               Submit
             </Button>

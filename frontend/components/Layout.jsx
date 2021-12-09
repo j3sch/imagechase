@@ -2,7 +2,7 @@ import Meta from './Meta'
 import Navigation from './Navigation'
 import Container from 'react-bootstrap/Container'
 import Footer from './Footer'
-import useCompUser from '../hooks/use-comp-user'
+
 
 export default function Layout({ children }) {
   return (

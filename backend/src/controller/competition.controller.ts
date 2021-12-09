@@ -28,6 +28,17 @@ export class CompetitionController {
           createdAt: 'desc',
         },
       ],
+      include: {
+        Submission: {
+          select: {
+            User: {
+              select: {
+                sub: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -35,17 +46,17 @@ export class CompetitionController {
   async getCompetitionById(@Param('id') id: string): Promise<CompetitionModel> {
     return await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
-      // include: {
-      //   Submission: {
-      //     select: {
-      //       User: {
-      //         select: {
-      //           sub: true,
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
+      include: {
+        Submission: {
+          select: {
+            User: {
+              select: {
+                sub: true,
+              },
+            },
+          },
+        },
+      },
     });
   }
 
@@ -100,12 +111,32 @@ export class CompetitionController {
     });
   }
 
+  @Get(':id/judge')
+  async getCompetitionJudges(@Param('id') id: string): Promise<any> {
+    return await this.prismaService.competition.findUnique({
+      where: { id: Number(id) },
+      select: {
+        Judge: {
+          select: {
+            User: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   @Post()
   async createCompetition(
     @Body()
     competitionData: {
       title: string;
-      content: string;
+      imageUrl: string;
+      imageAlt;
       type: string;
       description: string;
       rules: string;
@@ -117,7 +148,8 @@ export class CompetitionController {
   ): Promise<CompetitionModel | ErrorMessage> {
     const {
       title,
-      content,
+      imageUrl,
+      imageAlt,
       type,
       description,
       rules,
@@ -143,7 +175,8 @@ export class CompetitionController {
       return this.prismaService.competition.create({
         data: {
           title,
-          content,
+          imageUrl,
+          imageAlt,
           type,
           description,
           rules,

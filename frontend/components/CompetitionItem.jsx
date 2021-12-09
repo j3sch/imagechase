@@ -5,7 +5,6 @@ import Container from 'react-bootstrap/Container'
 import formatDatetime from '../lib/dateHelper'
 import clsx from 'clsx'
 import useIsUserCompJoined from '../hooks/use-is-user-comp-joined'
-
 export default function CompetitionItem({ competition }) {
   const { isJoined } = useIsUserCompJoined(competition)
 
@@ -23,7 +22,8 @@ export default function CompetitionItem({ competition }) {
         <Card.Img
           variant="top"
           height={265}
-          src={`https://source.unsplash.com/300x200/?${competition.type}`}
+          src={competition.imageUrl}
+          alt={competition.imageAlt}
           style={{ borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }}
         />
         <Card.Body className={'text-center'}>

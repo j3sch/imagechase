@@ -12,9 +12,13 @@ import formatDatetime from '../../../lib/dateHelper'
 import useCompUser from '../../../hooks/use-comp-user'
 import { useUser } from '@auth0/nextjs-auth0'
 import useIsUserCompJoined from '../../../hooks/use-is-user-comp-joined'
+import useCompetitionParticipantLength from '../../../hooks/use-competition-participants'
+import useCompetitionJudges from '../../../hooks/use-competition-judges'
 
 export default function Competition({ competition }) {
   const { isJoined } = useIsUserCompJoined(competition)
+  const { participantLength } = useCompetitionParticipantLength(competition.id)
+  const { compJudges } = useCompetitionJudges(competition.id)
 
   return (
     <>
@@ -37,6 +41,25 @@ export default function Competition({ competition }) {
             <Row className={'p-3 text-center text-lg-start'}>
               {competition ? competition.description : ''}
             </Row>
+            <Row className={'p-3 text-center text-lg-start'}>
+              {compJudges &&
+                compJudges.Judge.map((judge) => (
+                  <Badge
+                    bg="light"
+                    className={
+                      'text-text-light-blue rounded-circle d-flex justify-content-center align-items-center me-2'
+                    }
+                    style={{ height: '2.8rem', width: '2.8rem' }}
+                  >
+                    <span
+                      style={{ fontSize: '1.6rem' }}
+                      className={'fw-bold text-uppercase'}
+                    >
+                      {judge.User.name.slice(0, 1)}
+                    </span>
+                  </Badge>
+                ))}
+            </Row>
           </Col>
           <Col className={'px-4'}>
             <Row
@@ -53,7 +76,7 @@ export default function Competition({ competition }) {
                   style={{ fontSize: '1.3rem' }}
                 />
                 <span className={'fs-5 fw-bold'}>
-                  {competition ? competition.Participant.length : ''}
+                  {participantLength ? participantLength : 0}
                 </span>
               </Badge>
               {isJoined ? (

@@ -32,16 +32,19 @@ export class SubmissionController {
   async createSubmission(
     @Body()
     submissionData: {
-      content: string;
+      imageUrl: string;
+      imageAlt: string;
       description: string;
       userId: number;
       competitionId: number;
     },
   ): Promise<SubmissionModel | ErrorMessage> {
-    const { content, description, userId, competitionId } = submissionData;
+    const { imageUrl, imageAlt, description, userId, competitionId } =
+      submissionData;
     return await this.prismaService.submission.create({
       data: {
-        content,
+        imageUrl,
+        imageAlt,
         description,
         User: {
           connect: { id: userId },

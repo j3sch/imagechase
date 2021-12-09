@@ -5,8 +5,8 @@ export default function useIsUserCompJoined(competition) {
   const { user, isLoading } = useUser()
 
   if (!isLoading && user && competition) {
-    for (let i = 0; i < competition.Participant.length; i++) {
-      if (competition.Participant[i].user.sub === user.sub) {
+    for (let i = 0; i < competition.Submission.length; i++) {
+      if (competition.Submission[i].User.sub === user.sub) {
         isJoined = true
         break
       }

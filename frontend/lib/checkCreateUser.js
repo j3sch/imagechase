@@ -4,7 +4,7 @@ import { api } from '../config'
 export default async function checkCreateUser(user) {
   const body = {
     name: user.nickname,
-    sub: user.sub.slice(6),
+    sub: user.sub,
   }
 
   const res = await fetch(`${api}/users`, {

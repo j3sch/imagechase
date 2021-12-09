@@ -25,7 +25,8 @@ model User {
 
 model Competition {
   id           Int          @id @default(autoincrement())
-  content      String
+  imageUrl     String
+  imageAlt     String
   title        String       @db.VarChar(50)
   type         String       @db.VarChar(30)
   description  String       @db.VarChar(200)
@@ -42,7 +43,8 @@ model Competition {
 
 model Submission {
   id            Int         @id @default(autoincrement())
-  content       String
+  imageUrl      String
+  imageAlt      String
   description   String?
   User          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        Int

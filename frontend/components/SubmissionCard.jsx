@@ -23,14 +23,15 @@ export default function SubmissionCard({ submission }) {
         <Col xs={12} lg={6}>
           <Card.Img
             variant="top"
-            src={`https://source.unsplash.com/350x200/?`}
+            src={submission.imageUrl}
+            alt={submission.imageAlt}
           />
         </Col>
         <Col xs={12} lg={6}>
           <Card.Body style={{ padding: '1.5rem' }}>
             <Row className={'justify-content-between'}>
               <Card.Title className="fw-bolder w-auto">
-                {submission.user.name}
+                {submission.User.name}
               </Card.Title>
               <Container className={'w-auto m-0'}>
                 <Card.Text

@@ -10,6 +10,7 @@ import { Formik } from 'formik'
 import { useRouter } from 'next/router'
 import formatDatetime from '../../../lib/dateHelper'
 import useCompUser from '../../../hooks/use-comp-user'
+import { useState } from 'react'
 
 const validate = (values) => {
   const errors = {}
@@ -25,6 +26,32 @@ export default function JoinCompetition({ competition }) {
   const router = useRouter()
   const { id } = router.query
   const { compUser } = useCompUser()
+  const [imageUrl, setImageUrl] = useState('')
+  const [imageAlt, setImageAlt] = useState('')
+
+  const handleImageUpload = () => {
+    const { files } = document.querySelector('input[type="file"]')
+
+    const formData = new FormData()
+    formData.append('file', files[0])
+    formData.append('upload_preset', 'xbblyy5g')
+
+    const options = {
+      method: 'POST',
+      body: formData,
+    }
+
+    return fetch(
+      'https://api.cloudinary.com/v1_1/dgyi7cmag/image/upload',
+      options
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setImageUrl(res.secure_url)
+        setImageAlt(`An image of ${res.original_filename}`)
+      })
+      .catch((err) => console.log(err))
+  }
 
   return (
     <div className={'w-lg-75 mx-auto'}>
@@ -97,6 +124,8 @@ export default function JoinCompetition({ competition }) {
               description: values.description,
               userId: compUser.id,
               competitionId: parseInt(id),
+              imageUrl,
+              imageAlt,
             }
             console.log(submissionData)
             fetch(`${api}/submissions`, {
@@ -137,14 +166,18 @@ export default function JoinCompetition({ competition }) {
           }) => (
             <Form noValidate onSubmit={handleSubmit}>
               {/* title */}
-              <Form.Group className={'mb-3'} controlId="content">
-                <Form.Label>Submission file</Form.Label>
-                <Form.Control type="file" name="content" disabled />
-                <Form.Text className="text-muted">
-                  In the future you will be able to add your submission here.
-                  We&apos;ll never share your email with anyone else.
-                </Form.Text>
+              <Form.Group controlId="formFile" className="mb-3">
+                <Form.Label>Select image</Form.Label>
+                <Form.Control type="file" />
               </Form.Group>
+              <Button
+                variant="primary"
+                type="button"
+                className="mb-3"
+                onClick={handleImageUpload}
+              >
+                Submit
+              </Button>
               {/* description */}
               <Form.Group className="mb-3" controlId="description">
                 <Form.Label>Description</Form.Label>
