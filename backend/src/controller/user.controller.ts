@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { User as UserModel } from '@prisma/client';
 import { ErrorMessage } from 'src/types';
@@ -44,7 +44,7 @@ export class UserController {
       bio: string;
       sub: string;
     },
-  ): Promise<any | ErrorMessage> {
+  ): Promise<UserModel | ErrorMessage> {
     const { name, bio, sub } = userData;
     const userSub: { sub: string } = await this.prismaService.user.findUnique({
       where: {
@@ -67,5 +67,12 @@ export class UserController {
         message: 'User exits',
       };
     }
+  }
+
+  @Delete(':id')
+  async DeleteUser(@Param('id') id: string): Promise<UserModel> {
+    return this.prismaService.user.delete({
+      where: { id: Number(id) },
+    });
   }
 }

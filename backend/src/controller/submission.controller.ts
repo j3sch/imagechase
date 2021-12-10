@@ -89,4 +89,11 @@ export class SubmissionController {
       updateSubmissionRating,
     ]);
   }
+
+  @Delete(':id')
+  async DeleteSubmission(@Param('id') id: string): Promise<SubmissionModel> {
+    return this.prismaService.submission.delete({
+      where: { id: Number(id) },
+    });
+  }
 }

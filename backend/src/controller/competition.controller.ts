@@ -61,7 +61,7 @@ export class CompetitionController {
   }
 
   @Get(':id/participants')
-  async getCompetitionParticipantLength(@Param('id') id: string): Promise<any> {
+  async getCompetitionParticipantLength(@Param('id') id: string): Promise<Number> {
     const userIds = await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
       select: {
@@ -223,7 +223,7 @@ export class CompetitionController {
   }
 
   @Post(':id/judge')
-  async addJudg(
+  async addJudge(
     @Param('id') id: string,
     @Body()
     participantData: {
@@ -246,5 +246,12 @@ export class CompetitionController {
       },
     });
     return await this.prismaService.$transaction([addBio, createJudge]);
+  }
+
+  @Delete(':id')
+  async DeleteCompetition(@Param('id') id: string): Promise<CompetitionModel> {
+    return this.prismaService.competition.delete({
+      where: { id: Number(id) },
+    });
   }
 }
