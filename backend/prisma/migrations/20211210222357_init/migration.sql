@@ -13,7 +13,8 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Competition" (
     "id" SERIAL NOT NULL,
-    "content" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "imageAlt" TEXT NOT NULL,
     "title" VARCHAR(50) NOT NULL,
     "type" VARCHAR(30) NOT NULL,
     "description" VARCHAR(200) NOT NULL,
@@ -30,7 +31,8 @@ CREATE TABLE "Competition" (
 -- CreateTable
 CREATE TABLE "Submission" (
     "id" SERIAL NOT NULL,
-    "content" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
+    "imageAlt" TEXT NOT NULL,
     "description" TEXT,
     "userId" INTEGER NOT NULL,
     "competitionId" INTEGER NOT NULL,
