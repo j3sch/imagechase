@@ -5,8 +5,10 @@ import Container from 'react-bootstrap/Container'
 import formatDatetime from '../lib/dateHelper'
 import clsx from 'clsx'
 import useIsUserCompJoined from '../hooks/use-is-user-comp-joined'
+import JoinButton from './JoinButton'
 export default function CompetitionItem({ competition }) {
   const { isJoined } = useIsUserCompJoined(competition)
+  const currentDate = new Date()
 
   return (
     <Link
@@ -16,8 +18,10 @@ export default function CompetitionItem({ competition }) {
     >
       <Card
         style={cardStyle}
-        className={'competitionCard m-3'}
-        // className={ clsx(number % 3 === 1 && 'mx-5', 'my-4')}
+        className={`competitionCard m-3 ${
+          currentDate.toISOString().slice(0, 16) > competition.endDate &&
+          'bg-light bg-opacity-25'
+        }`}
       >
         <Card.Img
           variant="top"
@@ -36,35 +40,41 @@ export default function CompetitionItem({ competition }) {
           <Card.Title>{competition.title}</Card.Title>
           <Card.Text>{competition.description}</Card.Text>
           <Card.Text>
-            <Container className={'text-center'}>
-              <div
-                className={'text-uppercase fw-bolder mb-2'}
-                style={{ fontSize: '0.9rem', letterSpacing: '0.05rem' }}
-              >
-                Starts at
-              </div>
-              <div>{formatDatetime(competition.startDate)}</div>
-            </Container>
+            {currentDate.toISOString().slice(0, 16) < competition.startDate ? (
+              <Container className={'text-center'}>
+                <div
+                  className={'text-uppercase fw-bolder mb-2'}
+                  style={{ fontSize: '0.9rem', letterSpacing: '0.05rem' }}
+                >
+                  Starts at
+                </div>
+                <div>{formatDatetime(competition.startDate)}</div>
+              </Container>
+            ) : currentDate.toISOString().slice(0, 16) > competition.endDate ? (
+              <Container className={'text-center'}>
+                <div
+                  className={'text-uppercase fw-bolder mb-2'}
+                  style={{ fontSize: '0.9rem', letterSpacing: '0.05rem' }}
+                >
+                  Ended on
+                </div>
+                <div>{formatDatetime(competition.endDate)}</div>
+              </Container>
+            ) : (
+              currentDate.toISOString().slice(0, 16) < competition.endDate && (
+                <Container className={'text-center'}>
+                  <div
+                    className={'text-uppercase fw-bolder mb-2'}
+                    style={{ fontSize: '0.9rem', letterSpacing: '0.05rem' }}
+                  >
+                    Run until
+                  </div>
+                  <div>{formatDatetime(competition.endDate)}</div>
+                </Container>
+              )
+            )}
           </Card.Text>
-          {isJoined ? (
-            <Button
-              className={'w-auto'}
-              variant="outline-secondary"
-              disabled={true}
-            >
-              ALREADY JOINT
-            </Button>
-          ) : (
-            <Link
-              href="/competition/[id]/join"
-              as={`/competition/${competition.id}/join`}
-              passHref
-            >
-              <Button className={'w-auto'} variant="outline-secondary">
-                JOIN COMPETITION
-              </Button>
-            </Link>
-          )}
+          <JoinButton isJoined={isJoined} competition={competition} />
         </Card.Body>
       </Card>
     </Link>

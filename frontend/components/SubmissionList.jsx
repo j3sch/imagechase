@@ -3,8 +3,11 @@ import Stack from 'react-bootstrap/Stack'
 import Spinner from 'react-bootstrap/Spinner'
 import useCompetitionSubmissions from '../hooks/use-competition-submissions'
 
-export default function SubmissionList({ competitionId }) {
-  const { submissions, loading } = useCompetitionSubmissions(competitionId)
+export default function SubmissionList({ competitionId, isCompetitionOver }) {
+  const { submissions, loading } = useCompetitionSubmissions(
+    competitionId,
+    isCompetitionOver
+  )
 
   if (loading) {
     return (

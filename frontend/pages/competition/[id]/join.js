@@ -60,7 +60,7 @@ export default function JoinCompetition({ competition }) {
           <Col xs={12} lg={7}>
             <Row>
               <h3 className={'text-center text-lg-start'}>
-                {competition.title}
+                {competition ? competition.title : ''}
               </h3>
             </Row>
             <Row
@@ -69,7 +69,7 @@ export default function JoinCompetition({ competition }) {
               }
               style={{ letterSpacing: '0.15rem' }}
             >
-              {competition.type}
+              {competition ? competition.type : ''}
             </Row>
           </Col>
           <Col>
@@ -84,7 +84,7 @@ export default function JoinCompetition({ competition }) {
                   style={{ fontSize: '1.3rem' }}
                 />
                 <span className={'fs-5 fw-bold'}>
-                  {competition.participantCount}
+                  {competition ? competition.participantCount : 0}
                 </span>
               </Badge>
             </Row>
@@ -94,7 +94,7 @@ export default function JoinCompetition({ competition }) {
               }
             >
               <span className={'fw-bolder me-1 w-auto'}>Start date:</span>
-              {formatDatetime(competition.startDate)}
+              {formatDatetime(competition ? competition.startDate : null)}
             </Row>
 
             <Row
@@ -103,17 +103,17 @@ export default function JoinCompetition({ competition }) {
               }
             >
               <span className={'fw-bolder me-1 w-auto'}>End date:</span>
-              {formatDatetime(competition.endDate)}
+              {formatDatetime(competition ? competition.endDate : null)}
             </Row>
           </Col>
         </Row>
         <div>
           <h5>Instructions</h5>
-          <p>{competition.instructions}</p>
+          <p>{competition ? competition.instructions : ''}</p>
         </div>
         <div>
           <h5>Rules</h5>
-          <p>{competition.rules}</p>
+          <p>{competition ? competition.rules : ''}</p>
         </div>
       </Container>
       <Container className={'w-75 mb-5'}>
@@ -127,7 +127,6 @@ export default function JoinCompetition({ competition }) {
               imageUrl,
               imageAlt,
             }
-            console.log(submissionData)
             fetch(`${api}/submissions`, {
               method: 'POST',
               headers: {
@@ -232,5 +231,6 @@ export async function getStaticProps({ params: { id } }) {
     props: {
       competition,
     },
+    revalidate: 1,
   }
 }

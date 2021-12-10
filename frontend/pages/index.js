@@ -15,10 +15,6 @@ export default function Home() {
 
   return (
     <>
-      <script
-        src="//widget.cloudinary.com/global/all.js"
-        type="text/javascript"
-      ></script>{' '}
       <div className="d-flex align-items-center justify-content-between">
         <h1>Home</h1>
         {compUser !== undefined && compUser.admin && (

@@ -111,6 +111,32 @@ export class CompetitionController {
     });
   }
 
+  @Get(':id/submissions/votes')
+  async getSubmissionsByCompetitionVotes(
+    @Param('id') id: string,
+  ): Promise<SubmissionModel[]> {
+    return await this.prismaService.submission.findMany({
+      where: {
+        competitionId: Number(id),
+        NOT: {
+          rating: 0,
+        },
+      },
+      include: {
+        User: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          rating: 'asc',
+        },
+      ],
+    });
+  }
+
   @Get(':id/judge')
   async getCompetitionJudges(@Param('id') id: string): Promise<any> {
     return await this.prismaService.competition.findUnique({
@@ -122,6 +148,7 @@ export class CompetitionController {
               select: {
                 id: true,
                 name: true,
+                bio: true,
               },
             },
           },
@@ -201,15 +228,23 @@ export class CompetitionController {
     @Body()
     participantData: {
       userId: number;
+      bio: string;
     },
-  ): Promise<JudgeModel> {
-    const { userId } = participantData;
+  ): Promise<[UserModel, JudgeModel]> {
+    const { userId, bio } = participantData;
+    const addBio = this.prismaService.user.update({
+      where: { id: userId },
+      data: {
+        bio,
+      },
+    });
 
-    return await this.prismaService.judge.create({
+    const createJudge = this.prismaService.judge.create({
       data: {
         userId,
         competitionId: Number(id),
       },
     });
+    return await this.prismaService.$transaction([addBio, createJudge]);
   }
 }

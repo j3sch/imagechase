@@ -12,10 +12,12 @@ import { useState } from 'react'
 import { api } from '../config'
 import { useUser } from '@auth0/nextjs-auth0'
 import useCompUser from '../hooks/use-comp-user'
+import useCompetitionJudges from '../hooks/use-competition-judges'
 
 export default function SubmissionCard({ submission }) {
-  const { user, isLoading } = useUser()
-  const { compUser, loading } = useCompUser(user)
+  const [isUserJudge, setUserJudge] = useState(false)
+  const { compUser, loading } = useCompUser()
+  const { compJudges } = useCompetitionJudges(submission.competitionId)
 
   return (
     <Card>
@@ -53,7 +55,7 @@ export default function SubmissionCard({ submission }) {
                 {submission.description}
               </Card.Text>
             </div>
-            <Row>{RatingForm(compUser, submission)}</Row>
+            <Row>{RatingForm(compUser, submission, compJudges)}</Row>
           </Card.Body>
         </Col>
       </Row>
@@ -61,7 +63,7 @@ export default function SubmissionCard({ submission }) {
   )
 }
 
-const RatingForm = (user, submission) => {
+const RatingForm = (compUser, submission, compJudges) => {
   const [rating, setRating] = useState(0)
   const [isSubmited, setSubmited] = useState(false)
 
@@ -69,80 +71,84 @@ const RatingForm = (user, submission) => {
     setRating(newRating)
   }
 
-  if (user && user.judge) {
-    return (
-      !isSubmited && (
-        <Formik
-          onSubmit={(values) => {
-            const ratingData = {
-              feedback: values.feedback,
-              userId: user.id,
-              rating,
-            }
-            fetch(`${api}/submissions/${submission.id}/rating`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(ratingData),
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                console.log(data)
-                setSubmited(true)
+  return (
+    compJudges &&
+    compUser &&
+    compJudges.Judge.map(
+      (judge) =>
+        judge.User.id === compUser.id &&
+        !isSubmited && (
+          <Formik
+            onSubmit={(values) => {
+              const ratingData = {
+                feedback: values.feedback,
+                userId: compUser.id,
+                rating,
+              }
+              fetch(`${api}/submissions/${submission.id}/rating`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(ratingData),
               })
-          }}
-          initialValues={{
-            feedback: '',
-          }}
-        >
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors,
-          }) => (
-            <Form className={'mt-3'} onSubmit={handleSubmit}>
-              <Row className="d-flex align-items-center justify-content-between">
-                <Col>
-                  <ReactStars
-                    count={5}
-                    value={rating}
-                    onChange={ratingChanged}
-                    size={32}
-                    color2={'#ffd700'}
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(data)
+                  setSubmited(true)
+                })
+            }}
+            initialValues={{
+              feedback: '',
+            }}
+          >
+            {({
+              handleSubmit,
+              handleChange,
+              handleBlur,
+              values,
+              touched,
+              isValid,
+              errors,
+            }) => (
+              <Form className={'mt-3'} onSubmit={handleSubmit}>
+                <Row className="d-flex align-items-center justify-content-between">
+                  <Col>
+                    <ReactStars
+                      count={5}
+                      value={rating}
+                      onChange={ratingChanged}
+                      size={32}
+                      color2={'#ffd700'}
+                    />
+                  </Col>
+                  <Col xs="auto">
+                    <Button type="submit" variant="outline-secondary" size="md">
+                      SUBMIT
+                    </Button>
+                  </Col>
+                </Row>
+                <Form.Group
+                  className="my-2"
+                  controlId="exampleForm.ControlTextarea1"
+                >
+                  {/* <Form.Label>Example textarea</Form.Label> */}
+                  <Form.Control
+                    as="textarea"
+                    type="text"
+                    placeholder="Short description on competition card"
+                    name="feedback"
+                    value={values.feedback}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.feedback && errors.feedback}
+                    rows={2}
                   />
-                </Col>
-                <Col xs="auto">
-                  <Button type="submit" variant="outline-secondary" size="md">
-                    SUBMIT
-                  </Button>
-                </Col>
-              </Row>
-              <Form.Group
-                className="my-2"
-                controlId="exampleForm.ControlTextarea1"
-              >
-                {/* <Form.Label>Example textarea</Form.Label> */}
-                <Form.Control
-                  as="textarea"
-                  type="text"
-                  placeholder="Short description on competition card"
-                  name="feedback"
-                  value={values.feedback}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  isInvalid={touched.feedback && errors.feedback}
-                  rows={2}
-                />
-              </Form.Group>
-            </Form>
-          )}
-        </Formik>
-      )
+                </Form.Group>
+              </Form>
+            )}
+          </Formik>
+        )
     )
-  } else return ''
+  )
 }

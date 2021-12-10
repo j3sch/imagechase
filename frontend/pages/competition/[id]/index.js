@@ -8,7 +8,6 @@ import Col from 'react-bootstrap/Col'
 import Badge from 'react-bootstrap/Badge'
 import Container from 'react-bootstrap/Container'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-import Tooltip from 'react-bootstrap/Tooltip'
 import { api } from '../../../config'
 import formatDatetime from '../../../lib/dateHelper'
 import useCompUser from '../../../hooks/use-comp-user'
@@ -16,11 +15,16 @@ import { useUser } from '@auth0/nextjs-auth0'
 import useIsUserCompJoined from '../../../hooks/use-is-user-comp-joined'
 import useCompetitionParticipantLength from '../../../hooks/use-competition-participants'
 import useCompetitionJudges from '../../../hooks/use-competition-judges'
+import Popover from 'react-bootstrap/Popover'
+import JoinButton from '../../../components/JoinButton'
 
 export default function Competition({ competition }) {
   const { isJoined } = useIsUserCompJoined(competition)
   const { participantLength } = useCompetitionParticipantLength(competition.id)
   const { compJudges } = useCompetitionJudges(competition.id)
+  const currentDate = new Date()
+  const isCompetitionOver =
+    currentDate.toISOString().slice(0, 16) > competition.endDate
 
   return (
     <>
@@ -48,9 +52,14 @@ export default function Competition({ competition }) {
                 compJudges.Judge.map((judge) => (
                   <OverlayTrigger
                     key={judge}
-                    placement="top"
+                    placement="bottom"
                     overlay={
-                      <Tooltip id={judge.User.id}>{judge.User.name}</Tooltip>
+                      <Popover id={judge.User.id}>
+                        <Popover.Header as="h3">
+                          {judge.User.name}
+                        </Popover.Header>
+                        <Popover.Body>{judge.User.bio}</Popover.Body>
+                      </Popover>
                     }
                   >
                     <Badge
@@ -60,12 +69,20 @@ export default function Competition({ competition }) {
                       }
                       style={{ height: '2.8rem', width: '2.8rem' }}
                     >
-                      <span
-                        style={{ fontSize: '1.6rem' }}
-                        className={'fw-bold text-uppercase'}
+                      <Link
+                        href="/user/[i]/profile"
+                        as={`/user/${judge ? judge.User.id : ''}/profile`}
+                        passHref
                       >
-                        {judge.User.name.slice(0, 1)}
-                      </span>
+                        <div>
+                          <span
+                            style={{ fontSize: '1.6rem' }}
+                            className={'fw-bold text-uppercase'}
+                          >
+                            {judge.User.name.slice(0, 1)}
+                          </span>
+                        </div>
+                      </Link>
                     </Badge>
                   </OverlayTrigger>
                 ))}
@@ -89,25 +106,7 @@ export default function Competition({ competition }) {
                   {participantLength ? participantLength : 0}
                 </span>
               </Badge>
-              {isJoined ? (
-                <Button
-                  className={'w-auto'}
-                  variant="outline-secondary"
-                  disabled={true}
-                >
-                  ALREADY JOINT
-                </Button>
-              ) : (
-                <Link
-                  href="/competition/[id]/join"
-                  as={`/competition/${competition ? competition.id : ''}/join`}
-                  passHref
-                >
-                  <Button className={'w-auto'} variant="outline-secondary">
-                    JOIN COMPETITION
-                  </Button>
-                </Link>
-              )}
+              <JoinButton isJoined={isJoined} competition={competition} />
             </Row>
             <Row
               className={'justify-content-center justify-content-lg-end mb-1'}
@@ -125,7 +124,10 @@ export default function Competition({ competition }) {
           </Col>
         </Row>
       </Container>
-      <SubmissionList competitionId={competition ? competition.id : ''} />
+      <SubmissionList
+        competitionId={competition ? competition.id : ''}
+        isCompetitionOver={isCompetitionOver}
+      />
     </>
   )
 }
@@ -141,7 +143,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: true,
+    fallback: 'blocking',
   }
 }
 
