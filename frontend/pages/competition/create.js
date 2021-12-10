@@ -52,10 +52,8 @@ export default function CreateCompetitionForm() {
   const router = useRouter()
   const currentDate = new Date()
   const { compUser } = useCompUser()
-  const [imageUrl, setImageUrl] = useState('')
-  const [imageAlt, setImageAlt] = useState('')
 
-  const handleImageUpload = () => {
+  const submitCreateCompetition = (values) => {
     const { files } = document.querySelector('input[type="file"]')
 
     const formData = new FormData()
@@ -73,8 +71,29 @@ export default function CreateCompetitionForm() {
     )
       .then((res) => res.json())
       .then((res) => {
-        setImageUrl(res.secure_url)
-        setImageAlt(`An image of ${res.original_filename}`)
+        const competitionData = {
+          title: values.title,
+          imageUrl: res.secure_url,
+          imageAlt: `An image of ${res.original_filename}`,
+          type: values.type,
+          description: values.description,
+          instructions: values.instructions,
+          rules: values.description,
+          startDate: new Date(values.startDate).toISOString(),
+          endDate: new Date(values.endDate).toISOString(),
+          userId: compUser.id,
+        }
+        fetch(`${api}/competitions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(competitionData),
+        })
+          .then((response) => response.json())
+          .then(() => {
+            router.push('/')
+          })
       })
       .catch((err) => console.log(err))
   }
@@ -84,29 +103,7 @@ export default function CreateCompetitionForm() {
       <h2>Create a new competition</h2>
       <Formik
         onSubmit={(values) => {
-          const competitionData = {
-            title: values.title,
-            imageUrl,
-            imageAlt,
-            type: values.type,
-            description: values.description,
-            instructions: values.instructions,
-            rules: values.description,
-            startDate: new Date(values.startDate).toISOString(),
-            endDate: new Date(values.endDate).toISOString(),
-            userId: compUser.id,
-          }
-          fetch(`${api}/competitions`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(competitionData),
-          })
-            .then((response) => response.json())
-            .then(() => {
-              router.push('/')
-            })
+          submitCreateCompetition(values)
         }}
         validate={validate}
         initialValues={{
@@ -147,17 +144,9 @@ export default function CreateCompetitionForm() {
             </Form.Group>
             {/* content */}
             <Form.Group controlId="formFile" className="mb-3">
-              <Form.Label>Select image</Form.Label>
+              <Form.Label>Select Image</Form.Label>
               <Form.Control type="file" />
             </Form.Group>
-            <Button
-              variant="primary"
-              type="button"
-              className="mb-3"
-              onClick={handleImageUpload}
-            >
-              Submit
-            </Button>
             {/* type */}
             <Form.Group className="mb-3" controlId="type">
               <Form.Label>Competition Type</Form.Label>

@@ -28,11 +28,9 @@ export default function JoinCompetition({ competition }) {
   const router = useRouter()
   const { id } = router.query
   const { compUser } = useCompUser()
-  const [imageUrl, setImageUrl] = useState('')
-  const [imageAlt, setImageAlt] = useState('')
   const { compJudges } = useCompetitionJudges(competition.id)
 
-  const handleImageUpload = () => {
+  const submitCompetition = (values) => {
     const { files } = document.querySelector('input[type="file"]')
 
     const formData = new FormData()
@@ -50,8 +48,35 @@ export default function JoinCompetition({ competition }) {
     )
       .then((res) => res.json())
       .then((res) => {
-        setImageUrl(res.secure_url)
-        setImageAlt(`An image of ${res.original_filename}`)
+        const submissionData = {
+          content: 'imagepath',
+          description: values.description,
+          userId: compUser.id,
+          competitionId: parseInt(id),
+          imageUrl: res.secure_url,
+          imageAlt: `An image of ${res.original_filename}`,
+        }
+        fetch(`${api}/submissions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData),
+        })
+        const participantData = {
+          userId: compUser.id,
+        }
+        fetch(`${api}/competitions/${competition.id}/participants`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(participantData),
+        })
+          .then((response) => response.json())
+          .then(() => {
+            router.push('/')
+          })
       })
       .catch((err) => console.log(err))
   }
@@ -126,35 +151,7 @@ export default function JoinCompetition({ competition }) {
       <Container className={'w-75 mb-5'}>
         <Formik
           onSubmit={(values) => {
-            const submissionData = {
-              content: 'imagepath',
-              description: values.description,
-              userId: compUser.id,
-              competitionId: parseInt(id),
-              imageUrl,
-              imageAlt,
-            }
-            fetch(`${api}/submissions`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(submissionData),
-            })
-            const participantData = {
-              userId: compUser.id,
-            }
-            fetch(`${api}/competitions/${competition.id}/participants`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(participantData),
-            })
-              .then((response) => response.json())
-              .then(() => {
-                router.push('/')
-              })
+            submitCompetition(values)
           }}
           validate={validate}
           initialValues={{
@@ -173,17 +170,9 @@ export default function JoinCompetition({ competition }) {
             <Form noValidate onSubmit={handleSubmit}>
               {/* title */}
               <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Select image</Form.Label>
+                <Form.Label>Select Image</Form.Label>
                 <Form.Control type="file" />
               </Form.Group>
-              <Button
-                variant="primary"
-                type="button"
-                className="mb-3"
-                onClick={handleImageUpload}
-              >
-                Submit
-              </Button>
               {/* description */}
               <Form.Group className="mb-3" controlId="description">
                 <Form.Label>Description</Form.Label>

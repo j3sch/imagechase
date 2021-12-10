@@ -61,7 +61,7 @@ export default function CompetitionItem({ competition }) {
                     className={'text-uppercase fw-bolder mb-2'}
                     style={{ fontSize: '0.9rem', letterSpacing: '0.05rem' }}
                   >
-                    Run until
+                    Runs until
                   </div>
                   <div>{formatDatetime(competition.endDate)}</div>
                 </Container>
