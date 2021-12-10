@@ -61,7 +61,9 @@ export class CompetitionController {
   }
 
   @Get(':id/participants')
-  async getCompetitionParticipantLength(@Param('id') id: string): Promise<Number> {
+  async getCompetitionParticipantLength(
+    @Param('id') id: string,
+  ): Promise<Number> {
     const userIds = await this.prismaService.competition.findUnique({
       where: { id: Number(id) },
       select: {
@@ -118,9 +120,6 @@ export class CompetitionController {
     return await this.prismaService.submission.findMany({
       where: {
         competitionId: Number(id),
-        NOT: {
-          rating: 0,
-        },
       },
       include: {
         User: {
@@ -131,7 +130,7 @@ export class CompetitionController {
       },
       orderBy: [
         {
-          rating: 'asc',
+          rating: 'desc',
         },
       ],
     });
