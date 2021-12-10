@@ -11,6 +11,8 @@ import { useRouter } from 'next/router'
 import formatDatetime from '../../../lib/dateHelper'
 import useCompUser from '../../../hooks/use-comp-user'
 import { useState } from 'react'
+import JudgesList from '../../../components/JudgesList'
+import useCompetitionJudges from '../../../hooks/use-competition-judges'
 
 const validate = (values) => {
   const errors = {}
@@ -28,6 +30,7 @@ export default function JoinCompetition({ competition }) {
   const { compUser } = useCompUser()
   const [imageUrl, setImageUrl] = useState('')
   const [imageAlt, setImageAlt] = useState('')
+  const { compJudges } = useCompetitionJudges(competition.id)
 
   const handleImageUpload = () => {
     const { files } = document.querySelector('input[type="file"]')
@@ -58,10 +61,11 @@ export default function JoinCompetition({ competition }) {
       <Container className="align-items-center p-4 bg-light bg-opacity-25 border mb-5">
         <Row className={'mb-3'}>
           <Col xs={12} lg={7}>
-            <Row>
-              <h3 className={'text-center text-lg-start'}>
-                {competition ? competition.title : ''}
-              </h3>
+            <Row
+              className="px-3 pb-2 text-center text-lg-start"
+              style={{ fontSize: '1.7rem' }}
+            >
+              {competition ? competition.title : ''}
             </Row>
             <Row
               className={
@@ -109,12 +113,15 @@ export default function JoinCompetition({ competition }) {
         </Row>
         <div>
           <h5>Instructions</h5>
-          <p>{competition ? competition.instructions : ''}</p>
+          <p className="text-gray">
+            {competition ? competition.instructions : ''}
+          </p>
         </div>
         <div>
           <h5>Rules</h5>
-          <p>{competition ? competition.rules : ''}</p>
+          <p className="text-gray">{competition ? competition.rules : ''}</p>
         </div>
+        <JudgesList compJudges={compJudges} />
       </Container>
       <Container className={'w-75 mb-5'}>
         <Formik

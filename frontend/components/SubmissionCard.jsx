@@ -20,7 +20,7 @@ export default function SubmissionCard({ submission }) {
   const { compJudges } = useCompetitionJudges(submission.competitionId)
 
   return (
-    <Card>
+    <Card className="rounded-0">
       <Row>
         <Col xs={12} lg={6}>
           <Card.Img

@@ -16,13 +16,7 @@ export default function CompetitionItem({ competition }) {
       as={`competition/${competition.id}`}
       passHref
     >
-      <Card
-        style={cardStyle}
-        className={`competitionCard m-3 ${
-          currentDate.toISOString().slice(0, 16) > competition.endDate &&
-          'bg-light bg-opacity-25'
-        }`}
-      >
+      <Card style={cardStyle} className="competitionCard m-3">
         <Card.Img
           variant="top"
           height={265}
