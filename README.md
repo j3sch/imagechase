@@ -1,13 +1,13 @@
-### IMAGECHASE
+## IMAGECHASE
 
 This is the proof of concept page. The site is available under the url https://imagechase.herokuapp.com/. To be able to test all functions and features of the site, you need an admin login. Use the following login data to log in as admin.
 
 email: `admin@imagechase.com`
 password: `Imagechase_2021`
 
-An account can also be created to experience the normal user experience.
+To experience the normal user experience, an account can be created.
 
-##### DEVELOPMENT SETUP
+### DEVELOPMENT SETUP
 
-It is important that Docker is installed so that the application can be started locally. You must first remove all `_example` from the `.env` and `.env.local`. So that the environment variables can be used for the application.
+It is important that Docker is installed so that the application can be started locally. To setup your local develpment environment you must first create some environment variables. To do so you copy the `.env` files and then remove the `_example` extension. You find them in `/.env`, `/frontend/.env.local` and `/backend/.env`.
 After that, the application can be started with a `docker compose up` in the root folder.
