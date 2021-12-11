@@ -20,6 +20,10 @@ const validate = (values) => {
   if (!values.description) {
     errors.description = 'Required'
   }
+  // file
+  if (!values.file) {
+    errors.file = 'Required'
+  }
 
   return errors
 }
@@ -168,10 +172,19 @@ export default function JoinCompetition({ competition }) {
             errors,
           }) => (
             <Form noValidate onSubmit={handleSubmit}>
-              {/* title */}
-              <Form.Group controlId="formFile" className="mb-3">
+              {/* select image */}
+              <Form.Group controlId="file" className="mb-3">
                 <Form.Label>Select Image</Form.Label>
-                <Form.Control type="file" />
+                <Form.Control
+                  type="file"
+                  value={values.file}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  isInvalid={errors.file}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.file}
+                </Form.Control.Feedback>
               </Form.Group>
               {/* description */}
               <Form.Group className="mb-3" controlId="description">

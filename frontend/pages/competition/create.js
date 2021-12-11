@@ -14,6 +14,10 @@ const validate = (values) => {
   } else if (values.title.length > 50) {
     errors.title = 'Must be 50 characters or less'
   }
+  // file
+  if (!values.file) {
+    errors.file = 'Required'
+  }
   // type
   if (values.type == 'notype') {
     errors.type = 'Choose a type'
@@ -143,9 +147,18 @@ export default function CreateCompetitionForm() {
               </Form.Control.Feedback>
             </Form.Group>
             {/* content */}
-            <Form.Group controlId="formFile" className="mb-3">
+            <Form.Group controlId="file" className="mb-3">
               <Form.Label>Select Image</Form.Label>
-              <Form.Control type="file" />
+              <Form.Control
+                type="file"
+                value={values.file}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                isInvalid={touched.file && errors.file}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.file}
+              </Form.Control.Feedback>
             </Form.Group>
             {/* type */}
             <Form.Group className="mb-3" controlId="type">
