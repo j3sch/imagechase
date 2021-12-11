@@ -36,6 +36,9 @@ export default function Navigation() {
             <Link href="/prices" passHref>
               <Nav.Link>Prices</Nav.Link>
             </Link>
+            <Link href="/about" passHref>
+              <Nav.Link>About</Nav.Link>
+            </Link>
           </Nav>
           <Nav className={'align-items-lg-center'}>
             {!user && (
