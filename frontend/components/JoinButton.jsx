@@ -12,7 +12,15 @@ export default function JoinButton({ isJoined, competition }) {
     >
       Competition is over
     </Button>
-  ) : isJoined ? (
+  ) : currentDate.toISOString().slice(0, 16) < competition.startDate ? (
+      <Button
+      className="w-auto text-uppercase"
+      variant="outline-secondary"
+      disabled={true}
+    >
+      Not yet started
+    </Button>
+    ) : isJoined ? (
     <Button className={'w-auto'} variant="outline-secondary" disabled={true}>
       ALREADY JOINT
     </Button>
