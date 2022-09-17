@@ -1,6 +1,6 @@
 ## IMAGECHASE
 
-This is a proof of concept application. The site is available under the url https://imagechase.herokuapp.com/. To be able to test all functions and features of the site, you need an admin login. Use the following login data to log in as admin.
+This is a proof of concept application. The site is available under the url https://imagechase.vercel.app/. To be able to test all functions and features of the site, you need an admin login. Use the following login data to log in as admin.
 
 email: `admin@imagechase.com`
 password: `Imagechase_2021`
